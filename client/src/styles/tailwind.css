@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "Avenir-Next";
+    src: url('/src/styles/fonts/Avenir-Next.ttf') format('true-type')
+  }
+
+@font-face {
+    font-family: "PresicavHv-Regular";
+    src: url('/src/styles/fonts/PresicavLt-Regular.otf') format('opentype')
+  }
+
+@font-face {
+    font-family: "PresicavXl-Regular";
+    src: url('/src/styles/fonts/PresicavXl-Regular.otf') format('opentype')
+  }
+  
+@font-face {
+    font-family: "PresicavRg-Regular";
+    src: url('/src/styles/fonts/PresicavRg-Regular.otf') format('opentype')
+  }
+
+@font-face {
+    font-family: "PresicavRg-Bold";
+    src: url('/src/styles/fonts/PresicavXl-Bold.otf') format('opentype')
+  }
+  
+@font-face {
+    font-family: "ApercuMono-Regular";
+    src: url('/src/styles/fonts/ApercuMono-Regular.otf') format('opentype')
+  }
+
+  @font-face {
+    font-family: "ApercuMono-Bold";
+    src: url('/src/styles/fonts/ApercuMono-Bold.otf') format('opentype')
+  }
+
+body,html {
+    font-family: 'Avenir-Next', sans-serif;
+    background: #DEFF80;
+    min-width: auto;
+    min-height: 100vh;
+}
+
+.text-fancy-light {
+    font-family: 'PresicavXl-Regular', sans-serif;
+}
+
+.text-fancy-rg {
+    font-family: 'PresicavRg-Regular', sans-serif;
+}
+
+.text-fancy-bold {
+    font-family: 'ApercuMono-Regular', sans-serif;
+}
+
+.text-mono-rg {
+    font-family: 'ApercuMono-Regular', sans-serif;
+}
+
+.text-mono-bold {
+    font-family: 'ApercuMono-Bold', sans-serif;
+}
+
+.text-normal {
+    font-family: 'ApercuMono-Bold', sans-serif;
+}
+
+.gradient-bg {
+    
+}
+
+.text-pink {
+    color: #000000;
+}
+
+.bg-pink-300 {
+    background: #000000;
+}
+
+.bg-pink-400 {
+    background: #000000;
+}
+
+.text-blue {
+    color: #0C317A;
+}
+
+.text-peach {
+    color: #000000;
+}
+
+.text-teal {
+    color: #11CBD7;
+}
+
+.text-uppercase {
+    text-transform: uppercase;
+}
+
+.star {
+    position: absolute;
+    right: 20vw;
+    top: 5vh;
+}
+iframe {
+    min-height: 100vh;
+}
+
+.hero-video {
+    max-width: 400px;
+}
+
+.cta {
+    border-radius: 5px;
+}
+
+.headline-main {
+    margin-bottom: 1.2rem;
+} 
+
+
+
+ol {
+    font-size: 1.4rem;
+    list-style: decimal;
+    list-style-position: inside;
+}
+
+li {
+    margin-bottom: 1rem;
+}
+
+.tweetBtn {
+    max-width: 100px;
+}
+
+form div {
+    margin-bottom: 3rem;
+}

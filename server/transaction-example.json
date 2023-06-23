@@ -1,0 +1,29 @@
+transaction 1:
+category
+: 
+Array(2)
+"Travel"
+1
+: 
+"Taxi",
+
+amount
+: 
+6.33
+
+transaction 2: 
+category
+: 
+Array(3)
+0
+: 
+"Food and Drink"
+1
+: 
+"Restaurants"
+2
+: 
+"Coffee Shop", 
+amount
+: 
+5.4

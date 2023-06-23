@@ -1,2 +1,2 @@
 # back-bot
- automated social media video creation tool
+ Automated Video Tool

@@ -75,11 +75,13 @@ app.post('/generate-script', async (req, res) => {
 const AUTH_TOKEN = process.env.AUTH_TOKEN; // Retrieve authorization token from environment variable
 
 // Handle the initial POST request
-app.post('/create-talk', (req, res) => {
+app.post('/create-talk', async (req, res) => {
   try {
+    const { personaStoryPrompt } = req.body;
+
     sdk.auth(AUTH_TOKEN); // Authenticate with the provided authorization token
 
-    sdk.createTalk({
+    const data = {
       script: {
         type: 'text',
         subtitles: 'false',
@@ -88,20 +90,20 @@ app.post('/create-talk', (req, res) => {
           voice_id: 'en-US-JennyNeural'
         },
         ssml: 'false',
-        input: 'This is a story about a story',
+        input: personaStoryPrompt,
       },
       config: {
         fluent: 'false',
         pad_audio: '0.0'
       },
-      webhook: 'https://localhost:8000/webhook',
-      source_url: 'https://cdn.discordapp.com/attachments/1117865131272052787/1119006849920934019/jonlarsony_just_one_person_ecb819fc-68db-4c5a-a49f-345273413a79.png'
-    })
-      .then(({ data }) => res.json(data.id))
-      .catch(error => {
-        console.error(error);
-        res.status(500).json({ error: 'An error occurred' });
-      });
+      webhook: 'https://webhook.site/ea99fa36-a680-4dbf-a792-ded93a601d86',
+      source_url: 'https://cdn.discordapp.com/attachments/1109987621121302548/1121993656358928394/Screen_Shot_2023-06-23_at_7.42.09_PM.png'
+    };
+
+    const response = await sdk.createTalk(data);
+    const talkId = response.data.id;
+
+    res.json(talkId);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred' });
@@ -126,7 +128,6 @@ app.get('/get-video', (req, res) => {
   // Return the source_url in the response
   res.json({ source_url: sourceUrl });
 });
-
 
 
 

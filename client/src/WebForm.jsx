@@ -22,19 +22,19 @@ sentences.forEach((item, index) => {
   const isImage = fileInput && fileInput.type.includes('image');
 
   const textData = {
-    type: 'text',
+    type: 'data',
     layerName: `text${index + 1}`,
     property: 'Source Text',
     value: item.sentence
   };
 
-  // jsonOutput.push(textData);
+  jsonOutput.push(textData);
 
   if (isVideo) {
     const mediaData = {
       type: 'video',
       layerName: `media${index + 1}`,
-      src: `file:///Users/jonathanlarson/sites/back-bot/ae/elements/${fileInput.name}`
+      src: `file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/${fileInput.name}`
     };
 
     jsonOutput.push(mediaData);
@@ -42,7 +42,7 @@ sentences.forEach((item, index) => {
     const mediaData = {
       type: 'image',
       layerName: `media${index + 1}`,
-      src: `file:///Users/jonathanlarson/sites/back-bot/ae/elements/${fileInput.name}`
+      src: `file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/${fileInput.name}`
     };
 
     jsonOutput.push(mediaData);

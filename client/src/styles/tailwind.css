@@ -144,7 +144,17 @@ form {
 form > button {
     display: block;
     margin: auto;
-    background-color: black;
-    text-decoration: underline;
+    color: rgb(0, 0, 0);
+    background-color: rgb(252, 72, 255) !important;
+    /* text-decoration: underline; */
+    padding: 20px;
+    cursor: pointer;
+    border-radius: 4px;
 }
 
+.create-avatar {
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 30px;
+    background: black;
+}

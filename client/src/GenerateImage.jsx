@@ -71,7 +71,7 @@ const GenerateImage = () => {
         type="text"
           value={personaName}
           onChange={handleChange}
-          placeholder="Enter persona name"
+          placeholder="Enter image prompt"
         />
         <button type="submit">Generate Image</button>
       </form>

@@ -41,7 +41,7 @@ const personaName = "driverless cars";
     <div className="App">
       <h1 className=''>BACKBOT V3</h1>
       <header className="App-header text-fancy-bold">
-        <Backchanl></Backchanl>
+        {/* <Backchanl></Backchanl> */}
         <CreateScriptBtn></CreateScriptBtn>
         <GenerateImage></GenerateImage>
         <CreateAvatar></CreateAvatar>

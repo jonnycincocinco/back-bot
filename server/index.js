@@ -97,7 +97,7 @@ app.post('/create-talk', async (req, res) => {
         pad_audio: '0.0'
       },
       webhook: 'https://webhook.site/ea99fa36-a680-4dbf-a792-ded93a601d86',
-      source_url: 'https://cdn.discordapp.com/attachments/1109987621121302548/1121993656358928394/Screen_Shot_2023-06-23_at_7.42.09_PM.png'
+      source_url: 'https://cdn.discordapp.com/attachments/1109987621121302548/1122332626175414402/avatar.png'
     };
 
     const response = await sdk.createTalk(data);

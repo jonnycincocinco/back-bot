@@ -16,7 +16,7 @@ const PromptForm = ({ updatePrompt }) => {
   return (
     <form onSubmit={handleSubmit}>
       <textarea
-        cols="50" rows="5"
+        cols="80" rows="10"
         type="text"
         value={inputValue}
         onChange={handleChange}

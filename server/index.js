@@ -96,8 +96,15 @@ app.post('/create-talk', async (req, res) => {
         fluent: 'false',
         pad_audio: '0.0'
       },
+      face: {
+        top_left: [
+          0,
+          0
+        ],
+        size: 512
+      },
       webhook: 'https://webhook.site/ea99fa36-a680-4dbf-a792-ded93a601d86',
-      source_url: 'https://cdn.discordapp.com/attachments/1109987621121302548/1122332626175414402/avatar.png'
+      source_url: 'https://cdn.discordapp.com/attachments/1109987621121302548/1122658169781485809/avatar.png'
     };
 
     const response = await sdk.createTalk(data);
@@ -177,4 +184,4 @@ https.createServer(options, app).listen(8000, () => {
   // console.log('Server is running on https://localhost:8000');
 });
 
-// ./nexrender-cli-macos --file back-bot/output.json
+// ./nexrender-cli-macos --file back-bot/backbot.json

@@ -9,6 +9,7 @@ const WebForm = () => {
     setShowForm(true);
     fetchData();
   };
+
   const handleFormSubmit = (event) => {
     event.preventDefault();
   
@@ -28,6 +29,7 @@ const WebForm = () => {
   
       jsonOutput.push(specialMediaData);
     }
+    
   
     sentences.forEach((sentenceObj, index) => {
       const fileInput = formData.get(`media_${index}`);
@@ -37,6 +39,7 @@ const WebForm = () => {
       const textData = {
         type: 'data',
         layerName: `text${index + 1}`,
+        composition: `text${index + 1}`,
         property: 'Source Text',
         value: sentenceObj.sentence
       };
@@ -79,7 +82,7 @@ const WebForm = () => {
         const mediaData = {
           type: 'video',
           layerName: `additional_media${index + 1}`,
-          src: ''
+          src: 'file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/blank.mov'
         };
   
         jsonOutput.push(mediaData);
@@ -87,12 +90,40 @@ const WebForm = () => {
     });
   
     const jsonData = JSON.stringify(jsonOutput, null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json' });
+
+    const finalJsonData = `{
+      "template": {
+        "src": "file:///Users/jonathanlarson/sites/back-bot/ae/back-bot_generica-23.aep",
+        "composition": "Final",
+        "outputModule": "H.264 - Match Render Settings - 15 Mbps",
+        "outputExt": "mp4",
+        "settingsTemplate": "Best Settings"
+      },
+      "assets": ${jsonData},
+      "actions":{
+          "postrender": [
+              {
+                  "module": "@nexrender/action-encode",
+                  "preset": "mp4",
+                  "output": "render-edit.mp4"
+              },
+              {
+                "module": "@nexrender/action-encode",
+                "output": "/Users/jonathanlarson/sites/back-bot/ae/renders/back-bot.mp4",
+                  "preset": "mp4",
+                  "params": {"-vcodec": "libx264", "-r": 25}
+              }
+          ]
+      }
+    }`; 
+
+
+    const blob = new Blob([finalJsonData], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
   
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'output.json';
+    a.download = 'backbot.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

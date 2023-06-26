@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PromptForm from './PromptForm';
 
 
-const personaStoryPrompt = "write a 25 second news bulletin.  Make sure to begin the script with the question: do you expect driverless cars to take over your city in 2024? Group and label the remainder of the script into three distinct sections, each one focusing on a clear point that is approximately 5 seconds long.Finish the script with the following CTA, download the backchannel app to shape the conversation and see the results! base the bulletin off the following article:Tesla’s plan to develop a fully-driverless taxi without pedals or a steering wheel has prompted RBC Capital Markets to raise its price target on the company’s shares by more than 40 per cent. In a note to clients on Thursday, analyst Tom Narayan predicted robotaxis and autonomous vehicles in general could “transform society more than anything else in our lifetimes,” saving “millions of lives and trillions of hours.” He raised his price target on Nasdaq-listed Tesla shares (TSLA) from US$212 to US$305, while maintaining an “outperform” rating. CEO Elon Musk has said a robotaxi will be ready for launch in 2024, his latest timeline for an autonomous ride-sharing vehicle originally planned to hit the market in 2020. His envisions a cheaper cost per mile than public transportation. “Given how much value and convenience they offer and low pricing, given the elimination of the driver, we see consumers switching away from private car ownership,” Tom Narayan wrote on Thursday. “We anticipate private cars being banned in many cities around the globe.” Narayan says increasing sales volumes at a lower profitability, coupled with a greater focus on autonomous driving, is a winning strategy for the American automaker. Over time, he says, robotaxis could make up 70 per cent of Tesla’s value, with sales of autonomous driving software and vehicle sales representing the remaining 30 per cent.Tesla recently struck deals allowing Ford (F) and General Motors (GM) vehicles to use Tesla's Supercharger network. Narayan says this shows the company's ability to leverage its products to create partnerships. Many believe this will serve as a trojan horse and enable software licensing in the future, he wrote."
+const personaStoryPrompt = ""
 
 const CreateScriptBtn = () => {
   const [personaStoryPrompt, setPersonaStoryPrompt] = useState('');
@@ -64,9 +64,10 @@ const CreateScriptBtn = () => {
   return (
     <div>
       <div className='create-avatar'>
+      <p className='white text-left'>Write a 25-second video script based on a news story in this format: Start with the prompt question and then group and label the remainder of the script into three distinct sections, starting with a headline and then 3 sections each one focusing on an interesting insight that is 15 to 20 words long. Then end with a short synopsis of also 15-20 words. Here's the prompt question: </p>
       <form>
       <textarea
-        cols="50" rows="5"
+        cols="80" rows="50"
         type="text"
           value={personaStoryPrompt}
           onChange={handleInputChange}
@@ -76,7 +77,7 @@ const CreateScriptBtn = () => {
       <button className="cta text-fancy-rg inline-flex items-center px-6 py-4 mt-8 font-semibold text-white transition-all duration-200 bg-pink-300 hover:bg-pink-400 focus:bg-pink-400" onClick={handleClick}>Generate Script</button>
       
     </div>
-    <div id="output">{scriptData}</div>
+    <div className='mt-10 text-left' id="output">{scriptData}</div>
     </div>
   );
 };

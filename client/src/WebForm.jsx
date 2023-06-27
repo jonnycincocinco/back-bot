@@ -4,17 +4,21 @@ const WebForm = () => {
   const [showForm, setShowForm] = useState(false);
   const [sentences, setSentences] = useState([]);
   const [specialVideoFile, setSpecialVideoFile] = useState(null);
+  const [filePath, setFilePath] = useState('');
 
   const handleButtonClicked = () => {
     setShowForm(true);
     fetchData();
   };
 
+
+
+
   const handleFormSubmit = (event) => {
     event.preventDefault();
   
     const formData = new FormData(event.target);
-  
+ 
     const jsonOutput = [];
   
     const specialFileInput = document.getElementById('specialVideoInput').files[0];
@@ -24,13 +28,13 @@ const WebForm = () => {
       const specialMediaData = {
         type: specialIsVideo ? 'video' : 'image',
         layerName: 'media_special',
-        src: `file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/${specialFileInput.name}`
+        src: `${filePath}${specialFileInput.name}`
       };
   
       jsonOutput.push(specialMediaData);
     }
-    
-  
+
+ 
     sentences.forEach((sentenceObj, index) => {
       const fileInput = formData.get(`media_${index}`);
       const isVideo = fileInput && fileInput.type.includes('video');
@@ -50,7 +54,7 @@ const WebForm = () => {
         const mediaData = {
           type: 'video',
           layerName: `media${index + 1}`,
-          src: `file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/${fileInput.name}`
+          src: `${filePath}${fileInput.name}`
         };
   
         jsonOutput.push(mediaData);
@@ -58,7 +62,7 @@ const WebForm = () => {
         const mediaData = {
           type: 'image',
           layerName: `media${index + 1}`,
-          src: `file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/${fileInput.name}`
+          src: `${filePath}${fileInput.name}`
         };
   
         jsonOutput.push(mediaData);
@@ -74,7 +78,7 @@ const WebForm = () => {
         const additionalMediaData = {
           type: additionalMediaType,
           layerName: `additional_media${index + 1}`,
-          src: `file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/${additionalFileInput.name}`
+          src: `${filePath}${additionalFileInput.name}`
         };
   
         jsonOutput.push(additionalMediaData);
@@ -82,18 +86,66 @@ const WebForm = () => {
         const mediaData = {
           type: 'video',
           layerName: `additional_media${index + 1}`,
-          src: 'file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/blank.mov'
+          src: "file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/blank.mov"
         };
   
         jsonOutput.push(mediaData);
       }
+  
+      // Add second additional media element
+      const additionalFileInput2 = formData.get(`additional_media_${index}_2`);
+      const isAdditionalVideo2 = additionalFileInput2 && additionalFileInput2.type.includes('video');
+      const isAdditionalImage2 = additionalFileInput2 && additionalFileInput2.type.includes('image');
+  
+      if (isAdditionalVideo2 || isAdditionalImage2) {
+        const additionalMediaType2 = isAdditionalVideo2 ? 'video' : 'image';
+  
+        const additionalMediaData2 = {
+          type: additionalMediaType2,
+          layerName: `additional_media${index + 1}_2`,
+          src: `${filePath}${additionalFileInput2.name}`
+        };
+  
+        jsonOutput.push(additionalMediaData2);
+      } else {
+        const mediaData2 = {
+          type: 'video',
+          layerName: `additional_media${index + 1}_2`,
+          src: "file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/blank.mov"
+        };
+  
+        jsonOutput.push(mediaData2);
+      }
+
+      const additionalFileInput3 = formData.get(`additional_media_${index}_3`);
+      const isAdditionalVideo3 = additionalFileInput3 && additionalFileInput3.type.includes('video');
+      const isAdditionalImage3 = additionalFileInput3 && additionalFileInput3.type.includes('image');
+  
+      if (isAdditionalVideo3 || isAdditionalImage3) {
+        const additionalMediaType3 = isAdditionalVideo3 ? 'video' : 'image';
+  
+        const additionalMediaData3 = {
+          type: additionalMediaType3,
+          layerName: `additional_media${index + 1}_3`,
+          src: `${filePath}${additionalFileInput3.name}`
+        };
+  
+        jsonOutput.push(additionalMediaData3);
+      } else {
+        const mediaData3 = {
+          type: 'video',
+          layerName: `additional_media${index + 1}_3`,
+          src: "file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/blank.mov"
+        };
+  
+        jsonOutput.push(mediaData3);
+      }
     });
   
     const jsonData = JSON.stringify(jsonOutput, null, 2);
-
     const finalJsonData = `{
       "template": {
-        "src": "file:///Users/jonathanlarson/sites/back-bot/ae/back-bot_generica-23.aep",
+        "src": "${filePath}backbot.aep",
         "composition": "Final",
         "outputModule": "H.264 - Match Render Settings - 15 Mbps",
         "outputExt": "mp4",
@@ -115,15 +167,17 @@ const WebForm = () => {
               }
           ]
       }
-    }`; 
-
-
+    };
+    
+    
+    ${jsonData}`;
+  
     const blob = new Blob([finalJsonData], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
   
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'backbot.json';
+    a.download = 'output.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -146,6 +200,19 @@ const WebForm = () => {
     // Handle the selected file as per your requirements
   };
   
+  const handleAdditionalMediaInputChange2 = (event, index) => {
+    const file = event.target.files[0];
+    console.log(`Additional Media ${index + 1} selected:`, file);
+    // Handle the selected file as per your requirements
+  };
+  
+  const handleAdditionalMediaInputChange3 = (event, index) => {
+    const file = event.target.files[0];
+    console.log(`Additional Media ${index + 2} selected:`, file);
+    // Handle the selected file as per your requirements
+  };
+  
+
 
   const fetchData = () => {
     fetch('/src/assets/sentences.json')
@@ -171,25 +238,51 @@ const WebForm = () => {
 
       {showForm && (
         <form onSubmit={handleFormSubmit}>
+
+        <div className='mb-10'>
+          <label htmlFor="filePathInput">File Path:</label>
+          <p>file:///Users/jonathanlarson/sites/back-bot/ae/elements/</p>
+          <textarea
+            type="text"
+            id="filePathInput"
+            cols="80"
+            rows="1"
+            value={filePath}
+            onChange={(event) => setFilePath(event.target.value)}
+          />
+        </div>
+  
           {sentences.map((sentenceObj, index) => (
-  <div className="mb-10" key={index}>
-    <p>{sentenceObj.sentence}</p>
-    <input
-      type="file"
-      name={`media_${index}`}
-      onChange={(event) => {
-        handleFileInputChange(event, index);
-      }}
-    />
-    <input
-  type="file"
-  name={`additional_media_${index}`}
-  onChange={(event) => {
-    handleAdditionalMediaInputChange(event, index);
-  }}
-/>
-
-
+              <div className="mb-10" key={index}>
+                <p>{sentenceObj.sentence}</p>
+                <input
+                  type="file"
+                  name={`media_${index}`}
+                  onChange={(event) => {
+                    handleFileInputChange(event, index);
+                  }}
+                />
+                <input
+              type="file"
+              name={`additional_media_${index}`}
+              onChange={(event) => {
+                handleAdditionalMediaInputChange(event, index);
+              }}
+            />
+            <input
+              type="file"
+              name={`additional_media_${index}_2`}
+              onChange={(event) => {
+                handleAdditionalMediaInputChange2(event, index);
+              }}
+            />
+            <input
+              type="file"
+              name={`additional_media_${index}_3`}
+              onChange={(event) => {
+                handleAdditionalMediaInputChange3(event, index);
+              }}
+            />
   </div>
 ))}
 

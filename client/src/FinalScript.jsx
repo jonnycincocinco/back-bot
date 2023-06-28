@@ -63,7 +63,7 @@ const [promptField6, setPromptField6] = useState('');
      
       <form>
       <textarea
-  cols="80" rows="1"
+  cols="80" rows="2"
   type="text"
   id="promptField1"
   value={promptField1}
@@ -71,7 +71,7 @@ const [promptField6, setPromptField6] = useState('');
   placeholder=""
 />
 <textarea
-  cols="80" rows="1"
+  cols="80" rows="2"
   type="text"
   id="promptField2"
   value={promptField2}
@@ -79,7 +79,7 @@ const [promptField6, setPromptField6] = useState('');
   placeholder=""
 />
 <textarea
-  cols="80" rows="1"
+  cols="80" rows="2"
   type="text"
   id="promptField3"
   value={promptField3}
@@ -87,7 +87,7 @@ const [promptField6, setPromptField6] = useState('');
   placeholder=""
 />
 <textarea
-  cols="80" rows="1"
+  cols="80" rows="2"
   type="text"
   id="promptField4"
   value={promptField4}
@@ -95,7 +95,7 @@ const [promptField6, setPromptField6] = useState('');
   placeholder=""
 />
 <textarea
-  cols="80" rows="1"
+  cols="80" rows="2"
   type="text"
   id="promptField5"
   value={promptField5}
@@ -103,7 +103,7 @@ const [promptField6, setPromptField6] = useState('');
   placeholder=""
 />
 <textarea
-  cols="80" rows="1"
+  cols="80" rows="2"
   type="text"
   id="promptField6"
   value={promptField6}

@@ -54,6 +54,7 @@ const WebForm = () => {
         const mediaData = {
           type: 'video',
           layerName: `media${index + 1}`,
+          composition: `media${index + 1}`,
           src: `${filePath}${fileInput.name}`
         };
   
@@ -62,6 +63,7 @@ const WebForm = () => {
         const mediaData = {
           type: 'image',
           layerName: `media${index + 1}`,
+          composition: `media${index + 1}`,
           src: `${filePath}${fileInput.name}`
         };
   
@@ -78,6 +80,7 @@ const WebForm = () => {
         const additionalMediaData = {
           type: additionalMediaType,
           layerName: `additional_media${index + 1}`,
+          composition: `additional_media${index + 1}`,
           src: `${filePath}${additionalFileInput.name}`
         };
   
@@ -86,6 +89,7 @@ const WebForm = () => {
         const mediaData = {
           type: 'video',
           layerName: `additional_media${index + 1}`,
+          composition: `additional_media${index + 1}`,
           src: "file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/blank.mov"
         };
   
@@ -103,6 +107,7 @@ const WebForm = () => {
         const additionalMediaData2 = {
           type: additionalMediaType2,
           layerName: `additional_media${index + 1}_2`,
+          composition: `additional_media${index + 1}_2`,
           src: `${filePath}${additionalFileInput2.name}`
         };
   
@@ -111,6 +116,7 @@ const WebForm = () => {
         const mediaData2 = {
           type: 'video',
           layerName: `additional_media${index + 1}_2`,
+          composition: `additional_media${index + 1}_2`,
           src: "file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/blank.mov"
         };
   
@@ -127,6 +133,7 @@ const WebForm = () => {
         const additionalMediaData3 = {
           type: additionalMediaType3,
           layerName: `additional_media${index + 1}_3`,
+          composition: `additional_media${index + 1}_3`,
           src: `${filePath}${additionalFileInput3.name}`
         };
   
@@ -135,10 +142,37 @@ const WebForm = () => {
         const mediaData3 = {
           type: 'video',
           layerName: `additional_media${index + 1}_3`,
+          composition: `additional_media${index + 1}_3`,
           src: "file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/blank.mov"
         };
   
         jsonOutput.push(mediaData3);
+      }
+
+      const additionalFileInput4 = formData.get(`additional_media_${index}_4`);
+      const isAdditionalVideo4 = additionalFileInput3 && additionalFileInput3.type.includes('video');
+      const isAdditionalImage4 = additionalFileInput3 && additionalFileInput3.type.includes('image');
+  
+      if (isAdditionalVideo4 || isAdditionalImage4) {
+        const additionalMediaType4 = isAdditionalVideo4 ? 'video' : 'image';
+  
+        const additionalMediaData4 = {
+          type: additionalMediaType4,
+          layerName: `additional_media${index + 1}_4`,
+          composition: `additional_media${index + 1}_4`,
+          src: `${filePath}${additionalFileInput4.name}`
+        };
+  
+        jsonOutput.push(additionalMediaData4);
+      } else {
+        const mediaData4 = {
+          type: 'video',
+          layerName: `additional_media${index + 1}_4`,
+          composition: `additional_media${index + 1}_4`,
+          src: "file:///Users/jonathanlarson/sites/back-bot/ae/elements/_V0/blank.mov"
+        };
+  
+        jsonOutput.push(mediaData4);
       }
     });
   
@@ -167,10 +201,7 @@ const WebForm = () => {
               }
           ]
       }
-    };
-    
-    
-    ${jsonData}`;
+    }`;
   
     const blob = new Blob([finalJsonData], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -208,7 +239,13 @@ const WebForm = () => {
   
   const handleAdditionalMediaInputChange3 = (event, index) => {
     const file = event.target.files[0];
-    console.log(`Additional Media ${index + 2} selected:`, file);
+    console.log(`Additional Media ${index + 1} selected:`, file);
+    // Handle the selected file as per your requirements
+  };
+  
+  const handleAdditionalMediaInputChange4 = (event, index) => {
+    const file = event.target.files[0];
+    console.log(`Additional Media ${index + 1} selected:`, file);
     // Handle the selected file as per your requirements
   };
   
@@ -269,18 +306,25 @@ const WebForm = () => {
                 handleAdditionalMediaInputChange(event, index);
               }}
             />
-            <input
+            <input className="mb-10"
               type="file"
               name={`additional_media_${index}_2`}
               onChange={(event) => {
                 handleAdditionalMediaInputChange2(event, index);
               }}
             />
-            <input
+            <input className="mb-10"
               type="file"
               name={`additional_media_${index}_3`}
               onChange={(event) => {
                 handleAdditionalMediaInputChange3(event, index);
+              }}
+            />
+            <input className="mb-10"
+              type="file"
+              name={`additional_media_${index}_4`}
+              onChange={(event) => {
+                handleAdditionalMediaInputChange4(event, index);
               }}
             />
   </div>

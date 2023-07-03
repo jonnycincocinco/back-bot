@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
-const GenerateImage = () => {
-  const [personaName, setPersonaName] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-
-  useEffect(() => {
-    handleGenerateImage();
-  }, []);
+const GenerateImage = ({ personaName }) => {
+  const [imageUrls, setImageUrls] = useState([]);
 
   const handleGenerateImage = () => {
     generateStoryImage(personaName)
@@ -15,21 +10,11 @@ const GenerateImage = () => {
         // Handle the generated image data
         console.log(imageData);
 
-        // Access the generated image URL
-        const imageUrl = imageData.output[0]; // Assuming there is only one image URL in the output array
+        // Access the generated image URLs
+        const urls = imageData.output; // Assuming the output is an array of image URLs
 
-        // Store the image URL in your persona object or variable
-        const persona = {
-          name: personaName,
-          imageUrl: imageUrl,
-          // Other persona properties
-        };
-
-        // Use the persona object or variable later in your code
-        console.log('img', persona.imageUrl); // Example usage
-
-        // Set the imageUrl state variable
-        setImageUrl(imageUrl);
+        // Add the new image URLs to the existing ones
+        setImageUrls(prevUrls => [...prevUrls, ...urls]);
       })
       .catch(error => {
         // Handle the error
@@ -47,12 +32,17 @@ const GenerateImage = () => {
     }
   };
 
-  const handleDownloadImage = () => {
+  const handleDownloadImage = (imageUrl) => {
     const newTab = window.open(imageUrl, '_blank');
     if (newTab) {
       newTab.focus();
     }
-  };  
+  };
+
+  const handleSelectImage = (imageUrl) => {
+    // Handle the selected image
+    console.log('Selected image:', imageUrl);
+  };
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -67,18 +57,33 @@ const GenerateImage = () => {
     <div>
       <form onSubmit={handleSubmit}>
         <textarea
-        cols="50" rows="5"
-        type="text"
+          cols="50"
+          rows="5"
+          type="text"
           value={personaName}
           onChange={handleChange}
           placeholder="Enter image prompt"
         />
-        <button type="submit">Generate Image</button>
+        <button type="submit">Generate Images</button>
       </form>
-      {imageUrl && (
+      {imageUrls.length > 0 && (
         <div>
-          <img src={imageUrl} alt="Generated Story" />
-          <button onClick={handleDownloadImage}>Download Image</button>
+          <h2>Generated Images:</h2>
+          {imageUrls.map((imageUrl, index) => (
+            <div key={index} className='generated-image'>
+              <img src={imageUrl} alt="Generated Story" />
+              <div>
+                <button onClick={() => handleDownloadImage(imageUrl)}>Download Image</button>
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={() => handleSelectImage(imageUrl)}
+                  />
+                  Select Image
+                </label>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

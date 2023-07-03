@@ -10,6 +10,7 @@ import CreateAvatar from './CreateAvatar';
 import WebForm from './WebForm';
 import GenerateImage from './GenerateImage';
 import FinalScript from './FinalScript';
+import TranscribeAudio from './TranscribeAudio';
 
 axios.defaults.baseURL ="https://localhost:8000"
 
@@ -43,10 +44,11 @@ const personaName = "driverless cars";
       <h1 className='text-fancy-rg inline-flex items-center px-6 py-4 mb-8 font-semibold transition-all duration-200'>BACKBOT V3</h1>
       <header className="App-header text-fancy-bold">
         {/* <Backchanl></Backchanl> */}
-        <CreateScriptBtn></CreateScriptBtn>
-        <GenerateImage></GenerateImage>
-        <CreateAvatar></CreateAvatar>
-        <FinalScript></FinalScript>
+        {/* <CreateScriptBtn></CreateScriptBtn> */}
+        <TranscribeAudio />
+        <GenerateImage />
+        <CreateAvatar />
+        <FinalScript />
         {/* <button className="cta text-fancy-rg inline-flex items-center px-6 py-4 mt-8 font-semibold text-white transition-all duration-200 bg-pink-300 hover:bg-pink-400 focus:bg-pink-400" onClick={handleGenerateImage}>Generate Image</button> */}
         <WebForm/>
         {/* <GenerateJson/>   */}

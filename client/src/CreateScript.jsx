@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
-import PromptForm from './PromptForm';
 
-
-const personaStoryPrompt = ""
-
-const CreateScriptBtn = () => {
-  const [personaStoryPrompt, setPersonaStoryPrompt] = useState('');
+const CreateScript = ({ personaStoryPrompt }) => {
   const [scriptData, setScriptData] = useState('');
 
   const handleClick = async () => {
     try {
-      // Create script
+      // Create script using personaStoryPrompt
       const response = await fetch('https://localhost:8000/generate-script', {
         method: 'POST',
         headers: {
@@ -64,7 +59,7 @@ const CreateScriptBtn = () => {
   return (
     <div>
       <div className='create-avatar'>
-      <p className='white text-left'>Write a 25-second video script based on a news story in this format: Start with the prompt question and then group and label the remainder of the script into three distinct sections, starting with a headline and then 3 sections each one focusing on an interesting insight that is 15 to 20 words long. Then end with a short synopsis of also 15-20 words. Here's the prompt question: </p>
+      <p className='white text-left'> </p>
       <form>
       <textarea
         cols="80" rows="20"
@@ -86,5 +81,5 @@ export const getScriptData = () => {
   return scriptData;
 };
 
-export default CreateScriptBtn;
+export default CreateScript;
 

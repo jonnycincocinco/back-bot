@@ -9,9 +9,10 @@ const qs = require('querystring');
 const sdk = require('api')('@d-id/v4.2.0#az5qqc32livq5e2n');
 const app = express();
 app.use(cors());
+app.use(express.json());
 app.use(bodyParser.json());
 const fetch = require('node-fetch');
-
+const Replicate = require('replicate');
 
 const https = require('https');
 const fs = require('fs');
@@ -20,15 +21,6 @@ const options = {
   cert: fs.readFileSync('/Users/jonathanlarson/localhost.pem')
 };
 
-app.get('/backchanl-api', (req, res) => {
-  const response = {
-    question: 'Should Elon continue to be Twitter CEO?',
-    urls: ['https://newz.com', 'https://morenewz.org', 'https://evenmoernuz.net']
-  };
-
-  res.json(response);
-  console.log(response);
-});
 
 app.post('/generate-script', async (req, res) => {
   try {
@@ -69,6 +61,56 @@ app.post('/generate-script', async (req, res) => {
     console.error('Error generating story:', error);
     res.status(500).json({ error: 'An error occurred' });
   }
+});
+
+const replicate = new Replicate({
+  auth: process.env.REACT_APP_REPLICATE_API_TOKEN,
+  fetch: fetch,
+});
+
+app.post('/transcribe', async (req, res) => {
+  try {
+    const { audioUrl } = req.body;
+
+    if (!audioUrl) {
+      throw new Error('No audio URL provided');
+    }
+
+    const modelId = 'openai/whisper:91ee9c0c3df30478510ff8c8a3a545add1ad0259ad3a9f78fba57fbc05ee64f7';
+
+    const output = await replicate.run(
+      "openai/whisper:91ee9c0c3df30478510ff8c8a3a545add1ad0259ad3a9f78fba57fbc05ee64f7",
+      {
+        input: {
+          audio: audioUrl,
+        },
+        webhook: "https://localhost:8000/webhook",
+        language: "en",
+      }
+    );
+
+    const transcript = output.transcription;
+
+    res.json({
+      transcript,
+    });
+
+    console.log('Transcription:', transcript);
+  } catch (error) {
+    console.error('Error transcribing audio:', error);
+    res.status(500).json({ error: 'Failed to transcribe audio' });
+  }
+});
+
+app.post('/webhook', (req, res) => {
+  // Handle the incoming webhook request
+  const { data } = req.body;
+  console.log(data)
+  // Process the data from the webhook payload
+  // Extract relevant information and perform necessary actions
+
+  // Send a response back to the webhook request
+  res.status(200).send('Webhook received successfully');
 });
 
 
@@ -117,14 +159,14 @@ app.post('/create-talk', async (req, res) => {
   }
 });
 
-app.post('/webhook', (req, res) => {
-  const talkId = req.body; // Assuming the talk ID is included in the request body
-  console.log(talkId);
-  // Handle the webhook request and retrieve the necessary information
-  // Perform any required operations with the talk ID
+// app.post('/webhook', (req, res) => {
+//   const talkId = req.body; // Assuming the talk ID is included in the request body
+//   console.log(talkId);
+//   // Handle the webhook request and retrieve the necessary information
+//   // Perform any required operations with the talk ID
   
-  res.sendStatus(200); // Send a success response to the webhook request
-});
+//   res.sendStatus(200); // Send a success response to the webhook request
+// });
 
 
 // Handle the webhook request separately
@@ -152,7 +194,8 @@ app.post('/generate-story-image', async (req, res) => {
       // model: 'midjourney-papercut',
       model: 'midjourney',
       prompt: `image of ${personaName}`,
-      negative_prompt: "((words)), ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((naked)), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((extra breasts)), ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), ((missing breasts)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
+      negative_prompt: "((words)), nsfw, sexy, no other people, group of people, underwear, (((naked))), (((exposed breasts))), ((bikini)), extra legs, extra hands, extra arms, words, names, text, ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
+      init_image: 'https://cdn.discordapp.com/attachments/1124548031786799114/1125526895958687834/jonlarsony_1950s_color_photo_Florida_postcard_of_extradimension_ffaa9e93-b29e-412b-b626-424a457c30d1.png', 
       width: "512",
       height: "512",
       samples: "1",
@@ -164,7 +207,7 @@ app.post('/generate-story-image', async (req, res) => {
       track_id: null,
     });
 
-    const response = await axios.post('https://stablediffusionapi.com/api/v3/text2img', formData, {
+    const response = await axios.post('https://stablediffusionapi.com/api/v3/img2img', formData, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },

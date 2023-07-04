@@ -58,9 +58,18 @@ const TranscribeAudio = () => {
 
     const handleGenerateJsonFile = () => {
         const jsonData = {
-        // selectedImages: selectedImages,
-        transcribedSegmentsData: transcribedSegments
-    };
+            transcribedSegmentsData: transcribedSegments.map((item, index) => {
+              const expression = `if (time < ${item.start}) {0;} else {time - 4;}`;
+    
+              return {
+                type: 'data',
+                layerName: `text${index + 1}`,
+                property: 'Source Text',
+                value: item.text,
+                expression: expression
+              };
+            })
+          };
 
     const jsonContent = JSON.stringify(jsonData, null, 2);
 

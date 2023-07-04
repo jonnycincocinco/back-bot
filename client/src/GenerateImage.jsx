@@ -57,11 +57,13 @@ const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
 
   const handleCreateJsonFile = () => {
     const jsonData = {
-      selectedImages: selectedImages,
-      transcribedSegmentsData: transcribedSegmentsData
+      selectedImages: selectedImages.map((imageUrl, index) => ({
+        type: 'video',
+        layerName: `additional_media${index + 1}`,
+        composition: `additional_media${index + 1}`,
+        src: [imageUrl]
+      }))
     };
-
-    console.log('2', jsonData)
 
     const jsonContent = JSON.stringify(jsonData, null, 2);
 

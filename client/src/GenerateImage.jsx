@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const GenerateImage = ({ personaName }) => {
+const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
   const [imageUrls, setImageUrls] = useState([]);
+  const [selectedImages, setSelectedImages] = useState([]); // Add selectedImages state and its setter function
 
   const handleGenerateImage = () => {
     generateStoryImage(personaName)
@@ -40,8 +41,44 @@ const GenerateImage = ({ personaName }) => {
   };
 
   const handleSelectImage = (imageUrl) => {
-    // Handle the selected image
-    console.log('Selected image:', imageUrl);
+    // Check if the image is already selected
+    const isSelected = selectedImages && selectedImages.includes(imageUrl);
+    console.log('selected')
+  
+    if (isSelected) {
+      // Image is already selected, remove it from the selected images
+      setSelectedImages(prevSelected => prevSelected.filter(url => url !== imageUrl));
+    } else {
+      // Image is not selected, add it to the selected images
+      setSelectedImages(prevSelected => [...prevSelected, imageUrl]);
+    }
+  };
+  
+
+  const handleCreateJsonFile = () => {
+    const jsonData = {
+      selectedImages: selectedImages,
+      transcribedSegmentsData: transcribedSegmentsData
+    };
+
+    console.log('2', jsonData)
+
+    const jsonContent = JSON.stringify(jsonData, null, 2);
+
+    // Create a blob object from the JSON content
+    const blob = new Blob([jsonContent], { type: 'application/json' });
+
+    // Generate a temporary URL for the blob object
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary anchor element to download the file
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'selected_images.json';
+    link.click();
+
+    // Release the temporary URL resource
+    URL.revokeObjectURL(url);
   };
 
   const handleSubmit = e => {
@@ -69,6 +106,9 @@ const GenerateImage = ({ personaName }) => {
       {imageUrls.length > 0 && (
         <div>
           <h2>Generated Images:</h2>
+          <div>
+            <button onClick={handleCreateJsonFile}>Create Images JSON File</button>
+          </div>
           {imageUrls.map((imageUrl, index) => (
             <div key={index} className='generated-image'>
               <img src={imageUrl} alt="Generated Story" />

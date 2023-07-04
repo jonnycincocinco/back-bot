@@ -46,11 +46,11 @@ const personaName = "driverless cars";
         {/* <Backchanl></Backchanl> */}
         {/* <CreateScriptBtn></CreateScriptBtn> */}
         <TranscribeAudio />
-        <GenerateImage />
-        <CreateAvatar />
-        <FinalScript />
+        {/* <GenerateImage /> */}
+        {/* <CreateAvatar /> */}
+        {/* <FinalScript /> */}
         {/* <button className="cta text-fancy-rg inline-flex items-center px-6 py-4 mt-8 font-semibold text-white transition-all duration-200 bg-pink-300 hover:bg-pink-400 focus:bg-pink-400" onClick={handleGenerateImage}>Generate Image</button> */}
-        <WebForm/>
+        {/* <WebForm/> */}
         {/* <GenerateJson/>   */}
       </header>
     </div>

@@ -102,6 +102,40 @@ app.post('/transcribe', async (req, res) => {
   }
 });
 
+app.post('/transcribe-segments', async (req, res) => {
+  try {
+    const { audioUrl } = req.body;
+
+    if (!audioUrl) {
+      throw new Error('No audio URL provided');
+    }
+
+    const modelId = 'openai/whisper:91ee9c0c3df30478510ff8c8a3a545add1ad0259ad3a9f78fba57fbc05ee64f7';
+
+    const output = await replicate.run(
+      "openai/whisper:91ee9c0c3df30478510ff8c8a3a545add1ad0259ad3a9f78fba57fbc05ee64f7",
+      {
+        input: {
+          audio: audioUrl,
+        },
+        webhook: "https://localhost:8000/webhook",
+        language: "en",
+      }
+    );
+
+    const transcript = output.segments;
+
+    res.json({
+      transcript,
+    });
+
+    console.log('Transcription:', transcript);
+  } catch (error) {
+    console.error('Error transcribing audio:', error);
+    res.status(500).json({ error: 'Failed to transcribe audio' });
+  }
+});
+
 app.post('/webhook', (req, res) => {
   // Handle the incoming webhook request
   const { data } = req.body;

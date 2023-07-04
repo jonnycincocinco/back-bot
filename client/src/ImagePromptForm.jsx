@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import GenerateImage from './GenerateImage'; // Import the GenerateImage component
+import GenerateImage from './GenerateImage';
 
-const ImagePromptForm = ({ imagePrompts }) => {
+const ImagePromptForm = ({ imagePrompts, transcribedSegments }) => {
   const [selectedImage, setSelectedImage] = useState('');
 
   const handleButtonClick = (image) => {
@@ -21,7 +21,6 @@ const ImagePromptForm = ({ imagePrompts }) => {
         <div className='mt-10'>
           <h2>Selected Image Prompt:</h2>
           <p>{selectedImage}</p>
-          {/* Render the GenerateImage component with the selectedImage as personaName */}
           <GenerateImage personaName={selectedImage} />
         </div>
       )}

@@ -21,6 +21,7 @@ const options = {
   cert: fs.readFileSync('/Users/jonathanlarson/localhost.pem')
 };
 
+// app.use(express.static(path.join(__dirname,"../build")));
 
 app.post('/generate-script', async (req, res) => {
   try {

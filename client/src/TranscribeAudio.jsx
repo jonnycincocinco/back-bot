@@ -56,20 +56,28 @@ const TranscribeAudio = () => {
     }
   };
 
-    const handleGenerateJsonFile = () => {
-        const jsonData = {
-            transcribedSegmentsData: transcribedSegments.map((item, index) => {
-              const expression = `if (time < ${item.start}) {0;} else {time - 4;}`;
-    
-              return {
-                type: 'data',
-                layerName: `text${index + 1}`,
-                property: 'Source Text',
-                value: item.text,
-                expression: expression
-              };
-            })
-          };
+  const handleGenerateJsonFile = () => {
+    const jsonData = {
+      transcribedSegmentsData: transcribedSegments.map((item, index) => {
+        const expression = `if (time < ${item.start}) { 0; } else { time - 4; }`;
+  
+        return [
+          {
+            type: 'data',
+            layerName: `text${index + 1}`,
+            property: 'Source Text',
+            value: item.text,
+          },
+          {
+            type: 'data',
+            layerName: `outer_text${index + 1}`,
+            property: 'Time Remap',
+            expression: expression,
+          },
+        ];
+      }),
+    };
+  
 
     const jsonContent = JSON.stringify(jsonData, null, 2);
 
@@ -82,7 +90,7 @@ const TranscribeAudio = () => {
     // Create a temporary anchor element to download the file
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'selected_images.json';
+    link.download = 'segments.json';
     link.click();
 
     // Release the temporary URL resource

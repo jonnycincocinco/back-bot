@@ -96,7 +96,7 @@ app.post('/transcribe', async (req, res) => {
       transcript,
     });
 
-    console.log('Transcription:', transcript);
+    // console.log('Transcription:', transcript);
   } catch (error) {
     console.error('Error transcribing audio:', error);
     res.status(500).json({ error: 'Failed to transcribe audio' });

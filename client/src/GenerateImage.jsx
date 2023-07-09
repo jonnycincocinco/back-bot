@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
   const [imageUrls, setImageUrls] = useState([]);
-  const [selectedImages, setSelectedImages] = useState([]); // Add selectedImages state and its setter function
+  const [selectedImages, setSelectedImages] = useState([]);
 
   const handleGenerateImage = () => {
     generateStoryImage(personaName)
@@ -93,6 +93,7 @@ const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
   };
 
   return (
+    
     <div>
       <form onSubmit={handleSubmit}>
         <textarea

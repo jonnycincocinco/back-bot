@@ -140,12 +140,11 @@ const TranscribeAudio = () => {
     {transcribedSegments.length > 0 && (
         <div>
           <h2>Image Prompts</h2>
-        <GenerateImage 
-            transcribedSegmentsData={transcribedSegments} 
-            selectedImages={selectedImages}
-            handleSelectImage={handleSelectImage}
-        />
-
+            <GenerateImage 
+              transcribedSegmentsData={transcribedSegments} 
+              selectedImages={selectedImages}
+              handleSelectImage={handleSelectImage}
+            />
           <button onClick={handleGenerateJsonFile}>Create JSON File</button>
         </div>
       )}

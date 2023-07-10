@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import qs from 'qs';
 
 const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
   const [imageUrls, setImageUrls] = useState([]);
@@ -94,11 +95,11 @@ const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
 
   return (
     
-    <div>
+    <div className='flex flex-col'>
       <form onSubmit={handleSubmit}>
         <textarea
-          cols="50"
-          rows="5"
+          cols="32"
+          rows="7"
           type="text"
           value={personaName}
           onChange={handleChange}
@@ -107,10 +108,10 @@ const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
         <button type="submit">Generate Images</button>
       </form>
       {imageUrls.length > 0 && (
-        <div>
+        <div className='mb-20'>
           <h2>Generated Images:</h2>
           <div>
-            <button onClick={handleCreateJsonFile}>Create Images JSON File</button>
+            {/* <button onClick={handleCreateJsonFile}>Create Images JSON File</button> */}
           </div>
           {imageUrls.map((imageUrl, index) => (
             <div key={index} className='generated-image'>

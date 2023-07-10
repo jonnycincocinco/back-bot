@@ -130,7 +130,7 @@ app.post('/transcribe-segments', async (req, res) => {
       transcript,
     });
 
-    console.log('Transcription:', transcript);
+    // console.log('Transcription:', transcript);
   } catch (error) {
     console.error('Error transcribing audio:', error);
     res.status(500).json({ error: 'Failed to transcribe audio' });
@@ -228,9 +228,9 @@ app.post('/generate-story-image', async (req, res) => {
       // model: 'midjourney-v4-painta',
       // model: 'midjourney-papercut',
       model: 'midjourney',
-      prompt: `image of ${personaName}`,
+      prompt: `image of 1950s 1960s color photo Florida postcard, scifi otherworldly in ocala national forest facepaint cryptid offputting interdimensional divine feminine ritualistic ethereal eerie truecreepy cups nature photography 35mm film --ar 16:9, ${personaName}`,
       negative_prompt: "((words)), nsfw, sexy, no other people, group of people, underwear, (((naked))), (((exposed breasts))), ((bikini)), extra legs, extra hands, extra arms, words, names, text, ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
-      init_image: 'https://cdn.discordapp.com/attachments/1124548031786799114/1125526895958687834/jonlarsony_1950s_color_photo_Florida_postcard_of_extradimension_ffaa9e93-b29e-412b-b626-424a457c30d1.png', 
+      init_image: 'https://cdn.discordapp.com/attachments/1124548031786799114/1127789237375352892/jonlarsony_1950s_color_photo_of_a_ancient_bird_that_has_a_great_250b688a-6415-46c7-ba82-4001cefb2de3.png', 
       width: "512",
       height: "512",
       samples: "1",

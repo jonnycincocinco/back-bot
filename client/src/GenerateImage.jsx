@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import qs from 'qs';
 
-const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
+const GenerateImage = ({ personaName, transcribedSegmentsData, style }) => {
   const [imageUrls, setImageUrls] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
+  // const [style, setStyle] = useState('');
+  
+  console.log('new style', style);
 
   const handleGenerateImage = () => {
-    generateStoryImage(personaName)
-      .then(imageData => {
+    generateStoryImage(personaName, style)
+      .then((imageData) => {
         // Handle the generated image data
         console.log(imageData);
 
@@ -16,17 +18,17 @@ const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
         const urls = imageData.output; // Assuming the output is an array of image URLs
 
         // Add the new image URLs to the existing ones
-        setImageUrls(prevUrls => [...prevUrls, ...urls]);
+        setImageUrls((prevUrls) => [...prevUrls, ...urls]);
       })
-      .catch(error => {
+      .catch((error) => {
         // Handle the error
         console.error(error);
       });
   };
 
-  const generateStoryImage = async personaName => {
+  const generateStoryImage = async (personaName, style) => {
     try {
-      const response = await axios.post('/generate-story-image', { personaName });
+      const response = await axios.post(`/generate-story-image-${style}`, { personaName });
       return response.data;
     } catch (error) {
       console.error('Error generating image:', error);
@@ -44,17 +46,15 @@ const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
   const handleSelectImage = (imageUrl) => {
     // Check if the image is already selected
     const isSelected = selectedImages && selectedImages.includes(imageUrl);
-    console.log('selected')
-  
+
     if (isSelected) {
       // Image is already selected, remove it from the selected images
-      setSelectedImages(prevSelected => prevSelected.filter(url => url !== imageUrl));
+      setSelectedImages((prevSelected) => prevSelected.filter((url) => url !== imageUrl));
     } else {
       // Image is not selected, add it to the selected images
-      setSelectedImages(prevSelected => [...prevSelected, imageUrl]);
+      setSelectedImages((prevSelected) => [...prevSelected, imageUrl]);
     }
   };
-  
 
   const handleCreateJsonFile = () => {
     const jsonData = {
@@ -62,8 +62,8 @@ const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
         type: 'video',
         layerName: `additional_media${index + 1}`,
         composition: `additional_media${index + 1}`,
-        src: [imageUrl]
-      }))
+        src: [imageUrl],
+      })),
     };
 
     const jsonContent = JSON.stringify(jsonData, null, 2);
@@ -84,45 +84,47 @@ const GenerateImage = ({ personaName, transcribedSegmentsData }) => {
     URL.revokeObjectURL(url);
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     handleGenerateImage();
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setPersonaName(e.target.value);
   };
 
+  useEffect(() => {
+    if (style) {
+      handleGenerateImage();
+    }
+  }, [style]);
+
   return (
-    
     <div className='flex flex-col'>
       <form onSubmit={handleSubmit}>
         <textarea
-          cols="32"
-          rows="7"
-          type="text"
+          cols='32'
+          rows='7'
+          type='text'
           value={personaName}
           onChange={handleChange}
-          placeholder="Enter image prompt"
+          placeholder='Enter image prompt'
         />
-        <button type="submit">Generate Images</button>
+        <button type='submit'>Generate Images</button>
       </form>
       {imageUrls.length > 0 && (
         <div className='mb-20'>
           <h2>Generated Images:</h2>
           <div>
-            {/* <button onClick={handleCreateJsonFile}>Create Images JSON File</button> */}
+            <button onClick={handleCreateJsonFile}>Create Images JSON File</button>
           </div>
           {imageUrls.map((imageUrl, index) => (
             <div key={index} className='generated-image'>
-              <img src={imageUrl} alt="Generated Story" />
+              <img src={imageUrl} alt='Generated Story' />
               <div>
                 <button onClick={() => handleDownloadImage(imageUrl)}>Download Image</button>
                 <label>
-                  <input
-                    type="checkbox"
-                    onChange={() => handleSelectImage(imageUrl)}
-                  />
+                  <input type='checkbox' onChange={() => handleSelectImage(imageUrl)} />
                   Select Image
                 </label>
               </div>

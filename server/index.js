@@ -215,7 +215,47 @@ app.get('/get-video', (req, res) => {
 
 
 
-app.post('/generate-story-image', async (req, res) => {
+app.post('/generate-story-image-v1', async (req, res) => {
+  try {
+    const { personaName } = req.body;
+
+    if (!personaName) {
+      throw new Error('Invalid persona name');
+    }
+
+    const formData = qs.stringify({
+      key: process.env.STABLEDIFFUSION_API_KEY,
+      // model: 'midjourney-v4-painta',
+      // model: 'midjourney-papercut',
+      model: 'midjourney',
+      prompt: `image of 1950s 1960s color photo Florida postcard, scifi otherworldly in ocala national forest facepaint cryptid offputting interdimensional divine feminine ritualistic ethereal eerie truecreepy cups nature photography 35mm film --ar 16:9, ${personaName}`,
+      negative_prompt: "((words)), nsfw, sexy, no other people, group of people, underwear, (((naked))), (((exposed breasts))), ((bikini)), extra legs, extra hands, extra arms, words, names, text, ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
+      init_image: 'https://cdn.discordapp.com/attachments/1074534563986030656/1114786778252058744/jonlarsony_album_cover_0674df6a-9a46-4897-8ccf-b8d43e978de9.png', 
+      width: "512",
+      height: "512",
+      samples: "1",
+      num_inference_steps: "20",
+      seed: null,
+      guidance_scale: 7.5,
+      scheduler: "UniPCMultistepScheduler",
+      webhook: null,
+      track_id: null,
+    });
+
+    const response = await axios.post('https://stablediffusionapi.com/api/v3/img2img', formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error generating story:', error);
+    res.status(500).json({ error: 'Failed to generate story' });
+  }
+});
+
+app.post('/generate-story-image-v2', async (req, res) => {
   try {
     const { personaName } = req.body;
 

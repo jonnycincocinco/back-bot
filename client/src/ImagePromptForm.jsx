@@ -7,7 +7,6 @@ const ImagePromptForm = ({ imagePrompts, transcribedSegments }) => {
 
   const handleStyleSelect = (style) => {
     setSelectedStyle(style);
-    console.log('style', selectedStyle)
   };
   
   return (

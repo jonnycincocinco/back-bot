@@ -4,9 +4,8 @@ import axios from 'axios';
 const GenerateImage = ({ personaName, transcribedSegmentsData, style }) => {
   const [imageUrls, setImageUrls] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
-  // const [style, setStyle] = useState('');
   
-  console.log('new style', style);
+  console.log('style', style);
 
   const handleGenerateImage = () => {
     generateStoryImage(personaName, style)

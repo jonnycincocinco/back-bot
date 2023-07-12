@@ -5,11 +5,11 @@ import GenerateImage from './GenerateImage'; // Import the GenerateImage compone
 import axios from 'axios';
 
 const TranscribeAudio = () => {
-    const [audioUrl, setAudioUrl] = useState('');
-    const [transcript, setTranscript] = useState('');
-    const [transcribedSegments, setTranscribedSegments] = useState([]);
-    const [selectedImages, setSelectedImages] = useState([]);
-  
+  const [audioUrl, setAudioUrl] = useState('');
+  const [transcript, setTranscript] = useState('');
+  const [transcribedSegments, setTranscribedSegments] = useState([]);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [additionalText, setAdditionalText] = useState('');
 
   const transcribeSegments = async () => {
     try {
@@ -22,16 +22,16 @@ const TranscribeAudio = () => {
         return;
       }
 
-      const transcribedSegmentsData = transcript.map(segment => ({
+      const transcribedSegmentsData = transcript.map((segment) => ({
         end: segment.end,
         start: segment.start,
-        text: segment.text
+        text: segment.text,
       }));
 
       console.log(transcribedSegmentsData);
 
       // Save the transcribed segments
-      setTranscribedSegments(prevSegments => [...prevSegments, ...transcribedSegmentsData]);
+      setTranscribedSegments((prevSegments) => [...prevSegments, ...transcribedSegmentsData]);
     } catch (error) {
       console.error('Error transcribing audio:', error);
     }
@@ -46,13 +46,13 @@ const TranscribeAudio = () => {
   const handleSelectImage = (imageUrl) => {
     // Check if the image is already selected
     const isSelected = selectedImages.includes(imageUrl);
-  
+
     if (isSelected) {
       // Image is already selected, remove it from the selected images
-      setSelectedImages(prevSelected => prevSelected.filter(url => url !== imageUrl));
+      setSelectedImages((prevSelected) => prevSelected.filter((url) => url !== imageUrl));
     } else {
       // Image is not selected, add it to the selected images
-      setSelectedImages(prevSelected => [...prevSelected, imageUrl]);
+      setSelectedImages((prevSelected) => [...prevSelected, imageUrl]);
     }
   };
 
@@ -60,7 +60,7 @@ const TranscribeAudio = () => {
     const jsonData = {
       transcribedSegmentsData: transcribedSegments.map((item, index) => {
         const expression = `if (time < ${item.start}) { 0; } else { time - 4; }`;
-  
+
         return [
           {
             type: 'data',
@@ -77,7 +77,6 @@ const TranscribeAudio = () => {
         ];
       }),
     };
-  
 
     const jsonContent = JSON.stringify(jsonData, null, 2);
 
@@ -97,14 +96,11 @@ const TranscribeAudio = () => {
     URL.revokeObjectURL(url);
   };
 
-  
-
   const transcribe = async () => {
     try {
       const response = await axios.post('/transcribe', { audioUrl });
       const { transcript } = response.data;
       setTranscript(transcript);
-
     } catch (error) {
       console.error('Error transcribing audio:', error);
     }
@@ -119,6 +115,11 @@ const TranscribeAudio = () => {
     setAudioUrl(event.target.value);
   };
 
+  const handleAdditionalTextChange = (event) => {
+    setAdditionalText(event.target.value);
+    console.log('changed')
+  };
+
   return (
     <div>
       <h1>Transcribe Audio</h1>
@@ -127,24 +128,29 @@ const TranscribeAudio = () => {
           Enter Audio URL:
           <input type="text" value={audioUrl} onChange={handleInputChange} />
         </label>
+        <input
+        type="text"
+        value={additionalText}
+        onChange={handleAdditionalTextChange}
+        placeholder="Enter additional text"
+      />
         <button type="submit">Transcribe</button>
       </form>
       {transcript && (
         <div>
           <h2>Transcript</h2>
-          {/* <p>{transcript}</p> */}
-          <CreateTreatment personaStoryPrompt={"write a treatment for a music video. Start with an overview and then label each scene with the word 'scene' and then a numeral. Then create image prompts for each scene, labeling them with the word 'image' and then a numeral. Base the treatment on the following lyrics: " + transcript} />
+          <CreateTreatment personaStoryPrompt={`write a treatment for a music video. Start with an overview and then label each scene with the word 'scene' and then a numeral. Then create image prompts for each scene, labeling them with the word 'image' and then a numeral. Base the treatment on the following lyrics: ${transcript} ${additionalText}`} />
         </div>
       )}
 
-    {transcribedSegments.length > 0 && (
+      {transcribedSegments.length > 0 && (
         <div>
           <h2>Image Prompts</h2>
-            {/* <GenerateImage 
-              transcribedSegmentsData={transcribedSegments} 
-              selectedImages={selectedImages}
-              handleSelectImage={handleSelectImage}
-            /> */}
+          
+          {/* <ImagePromptForm
+            imagePrompts={transcribedSegments.map((segment) => segment.text)}
+            transcribedSegments={transcribedSegments}
+          /> */}
           <button onClick={handleGenerateJsonFile}>Create JSON File</button>
         </div>
       )}

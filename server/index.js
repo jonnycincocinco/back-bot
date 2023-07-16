@@ -13,6 +13,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 const fetch = require('node-fetch');
 const Replicate = require('replicate');
+const path = require('path');
 
 const https = require('https');
 const fs = require('fs');
@@ -69,39 +70,124 @@ const replicate = new Replicate({
   fetch: fetch,
 });
 
+
+// app.post('/transcribe', async (req, res) => {
+//   try {
+//     // Get transaction data from the request body, e.g., req.body.transactions
+//     const { audioUrl } = req.body;
+//     const response = await axios.get(audioUrl, { responseType: "stream" });
+//     const audioStream = response.data;
+
+//     // Generate the story based on transaction data
+//     const { Configuration, OpenAIApi } = require("openai");
+//     const configuration = new Configuration({
+//       apiKey: process.env.OPENAI_API_KEY,
+//     });
+//     const openai = new OpenAIApi(configuration);
+
+    
+//     const aiResponse = await openai.createTranscription({
+//       model: "whisper-1",
+//       file: audioStream,
+//     });
+
+
+//     const transcript = aiResponse;
+//     console.log(transcript);
+//     // Return the generated story and image URL as the response
+//     res.json({ transcript });
+//   } catch (error) {
+//     console.error('Error generating story:', error);
+//     res.status(500).json({ error: 'An error occurred' });
+//   }
+// });
+
+
 app.post('/transcribe', async (req, res) => {
   try {
-    const { audioUrl } = req.body;
+    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+    const audioUrl = req.body.audioUrl; // Assuming the audio URL is provided in the request body
+    const model = 'whisper-1';
 
-    if (!audioUrl) {
-      throw new Error('No audio URL provided');
-    }
+    // Download the audio file
+    const audioFilePath = path.join(__dirname, 'temp', 'audio.mp3');
+    const downloadResponse = await axios.get(audioUrl, { responseType: 'stream' });
+    downloadResponse.data.pipe(fs.createWriteStream(audioFilePath));
 
-    const modelId = 'openai/whisper:91ee9c0c3df30478510ff8c8a3a545add1ad0259ad3a9f78fba57fbc05ee64f7';
-
-    const output = await replicate.run(
-      "openai/whisper:91ee9c0c3df30478510ff8c8a3a545add1ad0259ad3a9f78fba57fbc05ee64f7",
-      {
-        input: {
-          audio: audioUrl,
-        },
-        webhook: "https://localhost:8000/webhook",
-        language: "en",
-      }
-    );
-
-    const transcript = output.transcription;
-
-    res.json({
-      transcript,
+    // Wait for the audio file to finish downloading
+    await new Promise((resolve) => {
+      downloadResponse.data.on('end', resolve);
     });
 
-    // console.log('Transcription:', transcript);
+    const formData = new FormData();
+    formData.append('model', model);
+    formData.append('file', fs.createReadStream(audioFilePath));
+
+    const transcriptionResponse = await axios.post('https://api.openai.com/v1/audio/transcriptions', formData, {
+      headers: {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        ...formData.getHeaders(),
+      },
+    });
+
+    const transcript = transcriptionResponse.data.text;
+
+    // Return the transcript in the response
+
+    // Generate VTT file
+    const vttFilePath = path.join(__dirname, 'temp', 'transcript.vtt');
+    const vttContent = `WEBVTT\n\n${transcript.vtt}`;
+    fs.writeFileSync(vttFilePath, vttContent);
+
+    // Return the transcript and VTT file URL in the response
+    res.json({
+      transcript,
+      vttDownloadUrl: `/download/${path.basename(vttFilePath)}`,
+    });
+
+    console.log('Transcription:', transcript);
   } catch (error) {
     console.error('Error transcribing audio:', error);
     res.status(500).json({ error: 'Failed to transcribe audio' });
   }
 });
+
+
+
+
+// app.post('/transcribe', async (req, res) => {
+//   try {
+//     const { audioUrl } = req.body;
+// 0
+//     if (!audioUrl) {
+//       throw new Error('No audio URL provided');
+//     }
+
+//     const modelId = 'openai/whisper:91ee9c0c3df30478510ff8c8a3a545add1ad0259ad3a9f78fba57fbc05ee64f7';
+
+//     const output = await replicate.run(
+//       "openai/whisper:91ee9c0c3df30478510ff8c8a3a545add1ad0259ad3a9f78fba57fbc05ee64f7",
+//       {
+//         input: {
+//           audio: audioUrl,
+//         },
+//         webhook: "https://localhost:8000/webhook",
+//         language: "en",
+//       }
+//     );
+
+//     const transcript = output.transcription;
+
+//     res.json({
+//       transcript,
+//     });
+
+//     // console.log('Transcription:', transcript);
+//   } catch (error) {
+//     console.error('Error transcribing audio:', error);
+//     res.status(500).json({ error: 'Failed to transcribe audio' });
+//   }
+// });
 
 app.post('/transcribe-segments', async (req, res) => {
   try {

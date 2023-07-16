@@ -16,34 +16,11 @@ axios.defaults.baseURL ="https://localhost:8000"
 
 function App() {
 
-let personaStoryPrompt = 'The Materialist';
-
-const createScript = async () => {
-  try {
-    const response = await fetch('http://localhost:8000/generate-script', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ personaStoryPrompt }),
-    });
-
-    const data = await response.json();
-    console.log(data);
-  } catch (error) {
-    console.error('Error generating story:', error);
-  } 
-};
-
-
-const personaName = "driverless cars";
-
 
   return (
     <div className="App">
       <h1 className='text-fancy-rg inline-flex items-center px-6 py-4 mb-8 font-semibold transition-all duration-200'>BACKBOT V3</h1>
       <header className="App-header text-fancy-bold">
-        {/* <Backchanl></Backchanl> */}
         {/* <CreateScriptBtn></CreateScriptBtn> */}
         <TranscribeAudio />
         {/* <GenerateImage /> */}

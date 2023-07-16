@@ -59,18 +59,19 @@ const TranscribeAudio = () => {
   const handleGenerateJsonFile = () => {
     const jsonData = {
       transcribedSegmentsData: transcribedSegments.map((item, index) => {
-        const expression = `if (time < ${item.start}) { 0; } else { time - 4; }`;
+        const expression = `if (time < ${item.start}) { 0; } else { time - ${item.start}; }`;
 
         return [
           {
             type: 'data',
-            layerName: `text${index + 1}`,
+            composition: `text${index + 1}`,
+            layerName: `text`,
             property: 'Source Text',
             value: item.text,
           },
           {
             type: 'data',
-            layerName: `outer_text${index + 1}`,
+            layerName: `text${index + 1}`,
             property: 'Time Remap',
             expression: expression,
           },

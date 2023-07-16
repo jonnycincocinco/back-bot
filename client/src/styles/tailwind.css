@@ -144,8 +144,8 @@ form {
 form > button {
     display: block;
     margin: auto;
-    color: rgb(0, 0, 0);
-    background-color: rgb(252, 72, 255) !important;
+    color: #fff;
+    background-color: #222 !important;
     /* text-decoration: underline; */
     padding: 20px;
     cursor: pointer;

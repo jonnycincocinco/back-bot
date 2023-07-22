@@ -22,7 +22,7 @@ const options = {
   cert: fs.readFileSync('/Users/jonathanlarson/localhost.pem')
 };
 
-// app.use(express.static(path.join(__dirname,"../build")));
+app.use(express.static(path.join(__dirname,"../dist")));
 
 app.post('/generate-script', async (req, res) => {
   try {
@@ -71,38 +71,6 @@ const replicate = new Replicate({
 });
 
 
-// app.post('/transcribe', async (req, res) => {
-//   try {
-//     // Get transaction data from the request body, e.g., req.body.transactions
-//     const { audioUrl } = req.body;
-//     const response = await axios.get(audioUrl, { responseType: "stream" });
-//     const audioStream = response.data;
-
-//     // Generate the story based on transaction data
-//     const { Configuration, OpenAIApi } = require("openai");
-//     const configuration = new Configuration({
-//       apiKey: process.env.OPENAI_API_KEY,
-//     });
-//     const openai = new OpenAIApi(configuration);
-
-    
-//     const aiResponse = await openai.createTranscription({
-//       model: "whisper-1",
-//       file: audioStream,
-//     });
-
-
-//     const transcript = aiResponse;
-//     console.log(transcript);
-//     // Return the generated story and image URL as the response
-//     res.json({ transcript });
-//   } catch (error) {
-//     console.error('Error generating story:', error);
-//     res.status(500).json({ error: 'An error occurred' });
-//   }
-// });
-
-
 app.post('/transcribe', async (req, res) => {
   try {
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -122,6 +90,9 @@ app.post('/transcribe', async (req, res) => {
     const formData = new FormData();
     formData.append('model', model);
     formData.append('file', fs.createReadStream(audioFilePath));
+    formData.append('language', 'en');
+
+
 
     const transcriptionResponse = await axios.post('https://api.openai.com/v1/audio/transcriptions', formData, {
       headers: {
@@ -151,8 +122,6 @@ app.post('/transcribe', async (req, res) => {
     res.status(500).json({ error: 'Failed to transcribe audio' });
   }
 });
-
-
 
 
 // app.post('/transcribe', async (req, res) => {
@@ -188,6 +157,36 @@ app.post('/transcribe', async (req, res) => {
 //     res.status(500).json({ error: 'Failed to transcribe audio' });
 //   }
 // });
+
+app.post('/generate-video', async (req, res) => {
+  try {
+
+    const { prompt } = req.body;
+
+    const output = await replicate.run(
+      "deforum-art/deforum-stable-diffusion:1a98303504c7d866d2b198bae0b03237eab82edc1491a5306895d12b0021d6f6",
+      {
+        input: {
+          model_checkpoint: "Protogen_V2.2.ckpt",
+          animation_prompts: "vaporwave future " + prompt,
+          fov: 40,
+          fps: 15,
+          max_frames: 20,
+        },
+        webhook: "https://localhost:8000/webhook",
+        language: "en",
+      }
+    );
+
+
+    res.json(output);
+
+    console.log('Output:', output);
+  } catch (error) {
+    console.error('Error generating video:', error);
+    res.status(500).json({ error: 'Failed to transcribe audio' });
+  }
+});
 
 app.post('/transcribe-segments', async (req, res) => {
   try {
@@ -357,6 +356,46 @@ app.post('/generate-story-image-v2', async (req, res) => {
       prompt: `image of 1950s 1960s color photo Florida postcard, scifi otherworldly in ocala national forest facepaint cryptid offputting interdimensional divine feminine ritualistic ethereal eerie truecreepy cups nature photography 35mm film --ar 16:9, ${personaName}`,
       negative_prompt: "((words)), nsfw, sexy, no other people, group of people, underwear, (((naked))), (((exposed breasts))), ((bikini)), extra legs, extra hands, extra arms, words, names, text, ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
       init_image: 'https://cdn.discordapp.com/attachments/1124548031786799114/1127789237375352892/jonlarsony_1950s_color_photo_of_a_ancient_bird_that_has_a_great_250b688a-6415-46c7-ba82-4001cefb2de3.png', 
+      width: "512",
+      height: "512",
+      samples: "1",
+      num_inference_steps: "20",
+      seed: null,
+      guidance_scale: 7.5,
+      scheduler: "UniPCMultistepScheduler",
+      webhook: null,
+      track_id: null,
+    });
+
+    const response = await axios.post('https://stablediffusionapi.com/api/v3/img2img', formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error generating story:', error);
+    res.status(500).json({ error: 'Failed to generate story' });
+  }
+});
+
+app.post('/generate-story-image-v3', async (req, res) => {
+  try {
+    const { personaName } = req.body;
+
+    if (!personaName) {
+      throw new Error('Invalid persona name');
+    }
+
+    const formData = qs.stringify({
+      key: process.env.STABLEDIFFUSION_API_KEY,
+      // model: 'midjourney-v4-painta',
+      // model: 'midjourney-papercut',
+      model: 'midjourney',
+      prompt: `image of 1970s 1980s color photo california postcard, street photography 35mm film --ar 16:9, ${personaName}`,
+      negative_prompt: "((words)), nsfw, sexy, no other people, group of people, underwear, (((naked))), (((exposed breasts))), ((bikini)), extra legs, extra hands, extra arms, words, names, text, ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
+      init_image: 'https://cdn.discordapp.com/attachments/1117865131272052787/1132089762304495707/Screen_Shot_2023-07-21_at_4.20.26_PM.png', 
       width: "512",
       height: "512",
       samples: "1",

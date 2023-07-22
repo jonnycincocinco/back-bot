@@ -4,6 +4,8 @@ import ImagePromptForm from './ImagePromptForm';
 const CreateTreatment = ({ personaStoryPrompt }) => {
   const [scriptData, setScriptData] = useState('');
   const [imagePrompts, setImagePrompts] = useState([]);
+  const [selectedImages, handleSelectImage] = useState([]);
+
 
   useEffect(() => {
     generateScript();
@@ -42,6 +44,10 @@ const CreateTreatment = ({ personaStoryPrompt }) => {
     }
   };
 
+  const handleSelectedImages = (selectedImages) => {
+    console.log('selected', selectedImages);
+  };
+
   return (
     <div>
       <div className='create-avatar'>
@@ -53,7 +59,13 @@ const CreateTreatment = ({ personaStoryPrompt }) => {
       {imagePrompts.length > 0 && (
         <div className='mt-10'>
           <h2>Image Prompts</h2>
-          <ImagePromptForm imagePrompts={imagePrompts} />
+          <button onClick={() => handleSelectedImages(selectedImages)}>Log Selected Images</button>
+
+          <ImagePromptForm 
+            imagePrompts={imagePrompts} 
+            selectedImages={selectedImages}
+            handleSelectImage={handleSelectImage}
+          />
         </div>
       )}
     </div>

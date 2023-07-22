@@ -141,9 +141,10 @@ form {
     margin: 6rem auto 1rem;
 }
 
-form > button {
+.main-button {
     display: block;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
     color: #fff;
     background-color: #222 !important;
     /* text-decoration: underline; */

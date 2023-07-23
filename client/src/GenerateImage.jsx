@@ -98,8 +98,8 @@ const GenerateImage = ({ personaName, transcribedSegmentsData, style, selectedIm
       </form>
       <form onSubmit={handleSubmitVideo}>
         <textarea
-          cols='32'
-          rows='7'
+          cols='0'
+          rows='0'
           type='text'
           value={personaName}
           onChange={handleChange}
@@ -115,6 +115,7 @@ const GenerateImage = ({ personaName, transcribedSegmentsData, style, selectedIm
           {imageUrls.map((imageUrl, index) => (
             <div key={index} className='generated-image'>
               <img src={imageUrl} alt='Generated Story' />
+              
               <div>
                 <button onClick={() => handleDownloadImage(imageUrl)}>Download Image</button>
                 <label>
@@ -124,7 +125,10 @@ const GenerateImage = ({ personaName, transcribedSegmentsData, style, selectedIm
               </div>
             </div>
           ))}
-          {videoUrls.map((videoUrl, index) => (
+          
+        </div>
+      )}
+      {videoUrls.map((videoUrl, index) => (
             <div key={index} className='generated-video'>
               <video controls>
                 <source src={videoUrl} type='video/mp4' />
@@ -134,8 +138,6 @@ const GenerateImage = ({ personaName, transcribedSegmentsData, style, selectedIm
               </div>
             </div>
           ))}
-        </div>
-      )}
     </div>
   );
 };

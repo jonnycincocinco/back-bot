@@ -164,14 +164,17 @@ app.post('/generate-video', async (req, res) => {
     const { prompt } = req.body;
 
     const output = await replicate.run(
-      "deforum-art/deforum-stable-diffusion:1a98303504c7d866d2b198bae0b03237eab82edc1491a5306895d12b0021d6f6",
+        "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351",
+      // "deforum-art/deforum-stable-diffusion:1a98303504c7d866d2b198bae0b03237eab82edc1491a5306895d12b0021d6f6",
       {
         input: {
-          model_checkpoint: "Protogen_V2.2.ckpt",
-          animation_prompts: "vaporwave future " + prompt,
-          fov: 40,
-          fps: 15,
-          max_frames: 20,
+          // model_checkpoint: "Protogen_V2.2.ckpt",
+          prompt: prompt + ", beautiful, 8k, perfect, award winning,",
+          num_frames: 24,
+          // animation_prompts: "vaporwave future " + prompt,
+          // fov: 40,
+          // fps: 15,
+          // max_frames: 20,
         },
         webhook: "https://localhost:8000/webhook",
         language: "en",

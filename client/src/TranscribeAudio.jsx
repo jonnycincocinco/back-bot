@@ -163,7 +163,7 @@ const TranscribeAudio = () => {
         <div>
           <h2>Transcript</h2>
           <CreateTreatment 
-            personaStoryPrompt={`write a treatment for a music video. Start with an overview and then label each scene with the word 'scene' and then a numeral. Then create image prompts for each scene, labeling them with the word 'image' and then a numeral. Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
+            personaStoryPrompt={`write a treatment for a music video. Start with an overview and then label each scene with the word 'scene' and then a numeral. Then create 2 separate image prompts for each scene, labeled 'foreground' for foreground elements, and 'background' background elements, labeling them with the word 'image' and then a numeral.  Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
             selectedImages={selectedImages}
             handleSelectImage={handleSelectImage}
           />

@@ -1,6 +1,6 @@
 
 import './App.css';
-import React, { useState, useEffect, useReducer } from 'react'
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import axios from 'axios'
 import './styles/tailwind.css'; 
 // import TranscribeAudio from './TranscribeAudio';
@@ -10,7 +10,99 @@ import StyleImage3 from './assets/StyleImage3.png';
 
 axios.defaults.baseURL ="https://localhost:8000"
 
+
+
+function ImagePromptForm({ imagePrompts, transcribedSegments }) {
+  const [selectedStyle, setSelectedStyle] = useState('');
+  const [selectedImages, setSelectedImages] = useState([]);
+  const imageForms = useRef([]);
+
+  const handleStyleSelect = (style) => {
+    setSelectedStyle(style);
+  };
+
+  const handleSelectImage = (imageUrl) => {
+    const isSelected = selectedImages.includes(imageUrl);
+    if (isSelected) {
+      setSelectedImages((prevSelected) => prevSelected.filter((url) => url !== imageUrl));
+    } else {
+      setSelectedImages((prevSelected) => [...prevSelected, imageUrl]);
+    }
+  };
+
+  // Define the generateStoryImage function inside ImagePromptForm
+  const generateStoryImage = async (personaName, style) => {
+    try {
+      const response = await axios.post(`/generate-story-image-${style}`, { personaName });
+      return response.data;
+    } catch (error) {
+      console.error('Error generating image:', error);
+      throw error;
+    }
+  };
+
+  const handleGenerateImage = () => {
+    generateStoryImage(personaName, selectedStyle)
+      .then((imageData) => {
+        const urls = imageData.output;
+        setImageUrls((prevUrls) => [...prevUrls, ...urls]);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  useImperativeHandle(ref, () => ({
+    handleGenerateImage: handleGenerateImage, // Expose the handleGenerateImage function to the parent
+  }));
+
+
+return (
+  <div>
+    <div>
+      <div className='flex flex-wrap flex-row mt-10'>
+        <div className='basis-1/3 text-left'>
+          <img className='mb-2' src={StyleImage1} alt='Generated Story' />
+          <button className='main-button' onClick={() => handleStyleSelect('v1')}>Style 1</button>
+        </div>
+        <div className='basis-1/3 text-left'>
+          <img className='mb-2' src={StyleImage2} alt='Generated Story' />
+          <button className='main-button' onClick={() => handleStyleSelect('v2')}>Style 2</button>
+        </div>
+        <div className='basis-1/3 text-left'>
+          <img className='mb-2' src={StyleImage3} alt='Generated Story' />
+          <button className='main-button' onClick={() => handleStyleSelect('v3')}>Style 3</button>
+        </div>
+      </div>
+    </div>
+    <div className='flex flex-wrap flex-row mt-10'>
+      {imagePrompts.map((image, index) => (
+        <div key={index} className='basis-1/3 text-left'>
+          <GenerateImage
+            ref={(ref) => this.imageForms.push(ref)}
+            personaName={image}
+            transcribedSegments={transcribedSegments}
+            style={selectedStyle}
+            selectedImages={selectedImages}
+            handleSelectImage={handleSelectImage}
+          />
+
+          {/* <p>{image}</p> */}
+        </div>
+      ))}
+    </div>
+    {selectedImages.length > 0 && (
+      <div className='mt-10'>
+        <button className='main-button' onClick={handleCreateJsonFile}>Create Images JSON File</button>
+      </div>
+    )}
+  </div>
+);
+};
+
 function App() {
+
+
 
   const [selectedStyle, setSelectedStyle] = useState('');
 
@@ -39,30 +131,28 @@ function App() {
   };
 
   const GenerateImage = ({ personaName, transcribedSegmentsData, style, selectedImages, handleSelectImage }) => {
+
+
     const [imageUrls, setImageUrls] = useState([]);
     const [videoUrls, setVideoUrls] = useState([]);
     const [inputValue, setInputValue] = useState('');
-    const [imageDataAvailable, setImageDataAvailable] = useState(false);
-
+  
     const handleGenerateImage = (style) => {
-      if (!imageDataAvailable) {
-        generateStoryImage(personaName, style)
-          .then((imageData) => {
-            const urls = imageData.output;
-            setImageUrls((prevUrls) => [...prevUrls, ...urls]);
-            setImageDataAvailable(true); // Set imageDataAvailable to true to stop further calls
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }
+      generateStoryImage(personaName, style)
+        .then((imageData) => {
+          const urls = imageData.output;
+          setImageUrls((prevUrls) => [...prevUrls, ...urls]);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     };
     
   
     const generateStoryImage = async (personaName, style) => {
       try {
         const response = await axios.post(`/generate-story-image-${style}`, { personaName });
-        console.log('avail',imageDataAvailable);
+        // console.log(personaName);
         return response.data;
       } catch (error) {
         console.error('Error generating image:', error);
@@ -119,12 +209,12 @@ function App() {
     const handleChange = (e) => {
       setPersonaName(e.target.value);
     };
-
-
-    useEffect(() => {
-      handleGenerateImage(selectedStyle);
-    }, [selectedStyle, imageDataAvailable]); // Add imageDataAvailable to the dependency array
   
+    useEffect(() => {
+      if (style) {
+        handleGenerateImage();
+      }
+    }, [style]);
   
     return (
       <div className='flex flex-col'>
@@ -187,83 +277,7 @@ function App() {
   };
 
 
-const ImagePromptForm = ({ imagePrompts, transcribedSegments }) => {
-  const [selectedStyle, setSelectedStyle] = useState('');
-  const [selectedImages, setSelectedImages] = useState([]);
 
-  const handleStyleSelect = (style) => {
-    setSelectedStyle(style);
-  };
-
-  const handleSelectImage = (imageUrl) => {
-    const isSelected = selectedImages.includes(imageUrl);
-    if (isSelected) {
-      setSelectedImages((prevSelected) => prevSelected.filter((url) => url !== imageUrl));
-    } else {
-      setSelectedImages((prevSelected) => [...prevSelected, imageUrl]);
-    }
-  };
-
-  const handleCreateJsonFile = () => {
-    const jsonData = {
-      selectedImages: selectedImages.map((imageUrl, index) => ({
-        type: 'video',
-        layerName: `additional_media${index + 1}`,
-        composition: `additional_media${index + 1}`,
-        src: [imageUrl],
-      })),
-    };
-
-    const jsonContent = JSON.stringify(jsonData, null, 2);
-    const blob = new Blob([jsonContent], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'selected_images.json';
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  return (
-    <div>
-      <div>
-        <div className='flex flex-wrap flex-row mt-10'>
-          <div className='basis-1/3 text-left'>
-            <img className='mb-2' src={StyleImage1} alt='Generated Story' />
-            <button className='main-button' onClick={() => handleStyleSelect('v1')}>Style 1</button>
-          </div>
-          <div className='basis-1/3 text-left'>
-            <img className='mb-2' src={StyleImage2} alt='Generated Story' />
-            <button className='main-button' onClick={() => handleStyleSelect('v2')}>Style 2</button>
-          </div>
-          <div className='basis-1/3 text-left'>
-            <img className='mb-2' src={StyleImage3} alt='Generated Story' />
-            <button className='main-button' onClick={() => handleStyleSelect('v3')}>Style 3</button>
-          </div>
-        </div>
-      </div>
-      <div className='flex flex-wrap flex-row mt-10'>
-        {imagePrompts.map((image, index) => (
-          <div key={index} className='basis-1/3 text-left'>
-            <GenerateImage
-              personaName={image}
-              transcribedSegments={transcribedSegments}
-              style={selectedStyle}
-              selectedImages={selectedImages}
-              handleSelectImage={handleSelectImage}
-            />
-            {/* <p>{image}</p> */}
-          </div>
-        ))}
-      </div>
-      {selectedImages.length > 0 && (
-        <div className='mt-10'>
-          <button className='main-button' onClick={handleCreateJsonFile}>Create Images JSON File</button>
-        </div>
-      )}
-    </div>
-  );
-};
 
 
 const CreateTreatment = ({ personaStoryPrompt }) => {
@@ -343,8 +357,15 @@ const TranscribeAudio = ({ selectedStyle }) => {
   const [transcribedSegments, setTranscribedSegments] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
   const [additionalText, setAdditionalText] = useState('');
+  const imageForms = useRef([]);
 
-  
+  // Function to trigger handleGenerateImage for all forms
+  const generateImagesForAllForms = () => {
+    imageForms.current.forEach((formRef) => {
+      formRef.handleGenerateImage(selectedStyle);
+    });
+  };
+
   const transcribeSegments = async () => {
     try {
       const response = await axios.post('/transcribe-segments', { audioUrl });
@@ -370,6 +391,25 @@ const TranscribeAudio = ({ selectedStyle }) => {
       console.error('Error transcribing audio:', error);
     }
   };
+
+  const transcribeAndGenerateImages = async () => {
+    // First, transcribe the audio
+    try {
+      const response = await axios.post('/transcribe', { audioUrl });
+      const { transcript } = response.data;
+      setTranscript(transcript);
+    } catch (error) {
+      console.error('Error transcribing audio:', error);
+      return;
+    }
+  
+    // Then, generate images for all prompt forms
+    imageForms.current.forEach((formRef) => {
+      formRef.handleGenerateImage(selectedStyle);
+    });
+  };
+
+  
 
   useEffect(() => {
     if (audioUrl) {
@@ -443,7 +483,7 @@ const TranscribeAudio = ({ selectedStyle }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    transcribe();
+    transcribeAndGenerateImages();
   };
 
   const handleInputChange = (event) => {
@@ -527,6 +567,14 @@ const TranscribeAudio = ({ selectedStyle }) => {
       <h1 className='text-fancy-rg inline-flex items-center px-6 py-4 mb-8 font-semibold transition-all duration-200'>BACKBOT V4</h1>
       <header className="App-header text-fancy-bold">
       <StyleSelection handleStyleSelect={handleStyleSelect} />
+        {/* Pass the necessary functions from App to ImagePromptForm */}
+        <ImagePromptForm
+          imagePrompts={imagePrompts}
+          selectedImages={selectedImages}
+          handleSelectImage={handleSelectImage}
+          handleGenerateImage={handleGenerateImage}
+          generateStoryImage={generateStoryImage}
+        />
         <TranscribeAudio selectedStyle={selectedStyle} />
 
 

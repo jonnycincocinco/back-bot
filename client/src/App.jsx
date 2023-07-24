@@ -42,20 +42,18 @@ function App() {
     const [imageUrls, setImageUrls] = useState([]);
     const [videoUrls, setVideoUrls] = useState([]);
     const [inputValue, setInputValue] = useState('');
-    const [imageDataAvailable, setImageDataAvailable] = useState(false);
+    const [imageData, imageDataAvailable, setImageDataAvailable] = useState(false);
 
     const handleGenerateImage = (style) => {
-      if (!imageDataAvailable) {
         generateStoryImage(personaName, style)
           .then((imageData) => {
             const urls = imageData.output;
             setImageUrls((prevUrls) => [...prevUrls, ...urls]);
-            setImageDataAvailable(true); // Set imageDataAvailable to true to stop further calls
+            // setImageDataAvailable(true); // Set imageDataAvailable to true to stop further calls
           })
           .catch((error) => {
             console.error(error);
           });
-      }
     };
     
   

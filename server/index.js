@@ -398,7 +398,7 @@ app.post('/generate-story-image-v3', async (req, res) => {
       model: 'midjourney',
       prompt: `image of a future design --ar 16:9, ${personaName}`,
       negative_prompt: "((words)), nsfw, sexy, no other people, group of people, underwear, (((naked))), (((exposed breasts))), ((bikini)), extra legs, extra hands, extra arms, words, names, text, ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
-      init_image: 'https://cdn.discordapp.com/attachments/1120216639611351183/1132907895441338408/StyleImage3.png', 
+      init_image: 'https://cdn.discordapp.com/attachments/1120216639611351183/1132922338959167568/Screen_Shot_2023-07-23_at_11.28.49_PM.png', 
       width: "512",
       height: "512",
       samples: "1",

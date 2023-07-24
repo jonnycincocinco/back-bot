@@ -101,22 +101,26 @@ function App() {
     const [imageData, imageDataAvailable, setImageDataAvailable] = useState(false);
 
     const handleGenerateImage = (style) => {
-        generateStoryImage(personaName, style)
-          .then((imageData) => {
-            const urls = imageData.output;
+      generateStoryImage(personaName, style)
+        .then((imageData) => {
+          const urls = imageData.output;
+          console.log(urls);
+          if (Array.isArray(urls)) {
             setImageUrls((prevUrls) => [...prevUrls, ...urls]);
-            // setImageDataAvailable(true); // Set imageDataAvailable to true to stop further calls
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+          } else {
+            console.error('Invalid image data:', urls);
+          }
+          // setImageDataAvailable(true); // Set imageDataAvailable to true to stop further calls
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     };
-    
   
     const generateStoryImage = async (personaName, style) => {
       try {
         const response = await axios.post(`/generate-story-image-${style}`, { personaName });
-        console.log('avail',imageDataAvailable);
+        // console.log('avail',imageDataAvailable);
         return response.data;
       } catch (error) {
         console.error('Error generating image:', error);
@@ -212,7 +216,7 @@ function App() {
             {imageUrls.map((imageUrl, index) => (
              
              <div key={index} className='generated-image'>
-                <div class="flex flex-col items-center justify-center gap-3">
+                <div className="flex flex-col items-center justify-center gap-3">
                 <img src={imageUrl} alt='Generated Story' />
                 
                 <div>

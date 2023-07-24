@@ -1,4 +1,3 @@
-
 import './App.css';
 import React, { useState, useEffect, useReducer } from 'react'
 import axios from 'axios'
@@ -9,7 +8,9 @@ import StyleImage2 from './assets/StyleImage2.png';
 import StyleImage3 from './assets/StyleImage3.png';
 import StyleImage4 from './assets/StyleImage4.png';
 
+
 axios.defaults.baseURL ="https://localhost:8000"
+
 
 const StyleSelection = ({ styleGroups, handleStyleSelect }) => {
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -19,6 +20,12 @@ const StyleSelection = ({ styleGroups, handleStyleSelect }) => {
     setSelectedGroup((prevGroup) => (prevGroup === groupName ? null : groupName)); // Toggle the selected group
     setSelectedStyle(null); // Reset selectedStyle whenever a group is clicked
   };
+
+  useEffect(() => {
+    if (styleGroups.length > 0) {
+      setSelectedGroup(styleGroups[0].groupName); // Select the first group by default
+    }
+  }, [styleGroups]);
 
   const handleStyleClick = (styleValue) => {
     setSelectedStyle(styleValue);
@@ -385,7 +392,7 @@ const CreateTreatment = ({ personaStoryPrompt }) => {
         <div className='mt-10'>
           <h2>Image Prompts</h2>
           <button onClick={() => handleSelectedImages(selectedImages)}>Log Selected Images</button>
-          <div class="">
+          <div className="">
        
           <ImagePromptForm 
             imagePrompts={imagePrompts} 

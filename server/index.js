@@ -396,9 +396,50 @@ app.post('/generate-story-image-v3', async (req, res) => {
       // model: 'midjourney-v4-painta',
       // model: 'midjourney-papercut',
       model: 'midjourney',
-      prompt: `image of 1970s 1980s color photo california postcard, street photography 35mm film --ar 16:9, ${personaName}`,
+      prompt: `image of a future design --ar 16:9, ${personaName}`,
       negative_prompt: "((words)), nsfw, sexy, no other people, group of people, underwear, (((naked))), (((exposed breasts))), ((bikini)), extra legs, extra hands, extra arms, words, names, text, ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
-      init_image: 'https://cdn.discordapp.com/attachments/1117865131272052787/1132089762304495707/Screen_Shot_2023-07-21_at_4.20.26_PM.png', 
+      init_image: 'https://cdn.discordapp.com/attachments/1120216639611351183/1132907895441338408/StyleImage3.png', 
+      width: "512",
+      height: "512",
+      samples: "1",
+      num_inference_steps: "20",
+      seed: null,
+      guidance_scale: 7.5,
+      scheduler: "UniPCMultistepScheduler",
+      webhook: null,
+      track_id: null,
+    });
+
+    const response = await axios.post('https://stablediffusionapi.com/api/v3/img2img', formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error generating story:', error);
+    res.status(500).json({ error: 'Failed to generate story' });
+  }
+});
+
+
+app.post('/generate-story-image-v4', async (req, res) => {
+  try {
+    const { personaName } = req.body;
+
+    if (!personaName) {
+      throw new Error('Invalid persona name');
+    }
+
+    const formData = qs.stringify({
+      key: process.env.STABLEDIFFUSION_API_KEY,
+      // model: 'midjourney-v4-painta',
+      // model: 'midjourney-papercut',
+      model: 'midjourney',
+      prompt: `image of a future design --ar 16:9, ${personaName}`,
+      negative_prompt: "((words)), nsfw, sexy, no other people, group of people, underwear, (((naked))), (((exposed breasts))), ((bikini)), extra legs, extra hands, extra arms, words, names, text, ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
+      init_image: 'https://cdn.discordapp.com/attachments/1120216639611351183/1120929112794603623/Screen_Shot_2023-06-20_at_9.10.54_PM.png', 
       width: "512",
       height: "512",
       samples: "1",

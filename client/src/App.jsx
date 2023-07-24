@@ -7,8 +7,58 @@ import './styles/tailwind.css';
 import StyleImage1 from './assets/StyleImage1.png';
 import StyleImage2 from './assets/StyleImage2.png';
 import StyleImage3 from './assets/StyleImage3.png';
+import StyleImage4 from './assets/StyleImage4.png';
 
 axios.defaults.baseURL ="https://localhost:8000"
+
+const StyleSelection = ({ styleGroups, handleStyleSelect }) => {
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [selectedStyle, setSelectedStyle] = useState(null);
+
+  const handleGroupClick = (groupName) => {
+    setSelectedGroup((prevGroup) => (prevGroup === groupName ? null : groupName)); // Toggle the selected group
+    setSelectedStyle(null); // Reset selectedStyle whenever a group is clicked
+  };
+
+  const handleStyleClick = (styleValue) => {
+    setSelectedStyle(styleValue);
+  };
+
+  return (
+    <div>
+      <div className='flex flex-row'>
+        {styleGroups.map((group, index) => (
+          <div key={index} className='mx-3 cursor-pointer' onClick={() => handleGroupClick(group.groupName)}>
+            {group.groupName}
+          </div>
+        ))}
+      </div>
+
+      {selectedGroup && (
+        <div className='mt-10'>
+          <h2>{selectedGroup}</h2>
+          <div className='flex flex-wrap flex-row'>
+            {styleGroups
+              .find((group) => group.groupName === selectedGroup)
+              .styles.map((style, styleIndex) => (
+                <div key={styleIndex} className='basis-1/4 text-left'>
+                  <button className='py-6 px-3' onClick={() => handleStyleSelect(style.value)}>
+                    {style.name}
+                    <img
+                      className={`mb-2 rounded-full ${selectedStyle === style.value ? 'border-4 border-blue-500' : ''}`}
+                      src={style.image}
+                      alt='Generated Story'
+                      onClick={() => handleStyleClick(style.value)}
+                    />
+                  </button>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 function App() {
 
@@ -19,24 +69,30 @@ function App() {
     setSelectedStyle(style);
   };
 
-  const StyleSelection = ({ handleStyleSelect }) => {
-    return (
-      <div className='flex flex-wrap flex-row mt-10'>
-          <div className='basis-1/3 text-left'>
-            <img className='mb-2' src={StyleImage1} alt='Generated Story' />
-            <button className='main-button' onClick={() => handleStyleSelect('v1')}>Style 1</button>
-          </div>
-          <div className='basis-1/3 text-left'>
-            <img className='mb-2' src={StyleImage2} alt='Generated Story' />
-            <button className='main-button' onClick={() => handleStyleSelect('v2')}>Style 2</button>
-          </div>
-          <div className='basis-1/3 text-left'>
-            <img className='mb-2' src={StyleImage3} alt='Generated Story' />
-            <button className='main-button' onClick={() => handleStyleSelect('v3')}>Style 3</button>
-          </div>
-        </div>
-    );
-  };
+  
+
+  // Assuming you have an array of style groups like this
+  const [styleGroups] = useState([
+    {
+      groupName: 'Group 1',
+      styles: [
+        { name: 'Style 1', value: 'v1', image: StyleImage1 },
+        { name: 'Style 2', value: 'v2', image: StyleImage2 },
+        // Add more styles for group 1
+      ],
+    },
+    {
+      groupName: 'Group 2',
+      styles: [
+        { name: 'Style 3', value: 'v3', image: StyleImage3 },
+        { name: 'Style 4', value: 'v4', image: StyleImage4 },
+        // Add more styles for group 2
+      ],
+    },
+    // Add more groups of styles
+  ]);
+
+
 
   const GenerateImage = ({ personaName, transcribedSegmentsData, style, selectedImages, handleSelectImage }) => {
     const [imageUrls, setImageUrls] = useState([]);
@@ -126,7 +182,7 @@ function App() {
   
     return (
       <div className='flex flex-col'>
-        <form onSubmit={handleSubmit}>
+        {/* <form onSubmit={handleSubmit}>
           <textarea
             cols='32'
             rows='7'
@@ -137,7 +193,7 @@ function App() {
           />
           <button className='main-button' type='submit'>Generate Images</button>
   
-        </form>
+        </form> */}
         <form onSubmit={handleSubmitVideo}>
           <textarea
             cols='0'
@@ -150,12 +206,13 @@ function App() {
           <button className='main-button' type='submit'>Generate Video</button>
         </form>
   
-  
         {imageUrls.length > 0 && (
-          <div className='mb-20'>
+          <div className='flex-none mb-20'>
             <h2>Generated Images:</h2>
             {imageUrls.map((imageUrl, index) => (
-              <div key={index} className='generated-image'>
+             
+             <div key={index} className='generated-image'>
+                <div class="flex flex-col items-center justify-center gap-3">
                 <img src={imageUrl} alt='Generated Story' />
                 
                 <div>
@@ -166,9 +223,9 @@ function App() {
                   </label>
                 </div>
               </div>
+              </div>
             ))}
-            
-          </div>
+            </div>
         )}
         {videoUrls.map((videoUrl, index) => (
               <div key={index} className='generated-video'>
@@ -181,6 +238,7 @@ function App() {
               </div>
             ))}
       </div>
+       
     );
   };
 
@@ -224,7 +282,7 @@ const ImagePromptForm = ({ imagePrompts, transcribedSegments }) => {
 
   return (
     <div>
-      <div>
+      {/* <div>
         <div className='flex flex-wrap flex-row mt-10'>
           <div className='basis-1/3 text-left'>
             <img className='mb-2' src={StyleImage1} alt='Generated Story' />
@@ -239,10 +297,10 @@ const ImagePromptForm = ({ imagePrompts, transcribedSegments }) => {
             <button className='main-button' onClick={() => handleStyleSelect('v3')}>Style 3</button>
           </div>
         </div>
-      </div>
-      <div className='flex flex-wrap flex-row mt-10'>
+      </div> */}
+      <div className='overflow-x-auto flex'>
         {imagePrompts.map((image, index) => (
-          <div key={index} className='basis-1/3 text-left'>
+          <div key={index} className='flex-none w-1/4 mb-20'>
             <GenerateImage
               personaName={image}
               transcribedSegments={transcribedSegments}
@@ -323,12 +381,14 @@ const CreateTreatment = ({ personaStoryPrompt }) => {
         <div className='mt-10'>
           <h2>Image Prompts</h2>
           <button onClick={() => handleSelectedImages(selectedImages)}>Log Selected Images</button>
-
+          <div class="">
+       
           <ImagePromptForm 
             imagePrompts={imagePrompts} 
             selectedImages={selectedImages}
             handleSelectImage={handleSelectImage}
           />
+        </div>
         </div>
       )}
     </div>
@@ -524,7 +584,7 @@ const TranscribeAudio = ({ selectedStyle }) => {
     <div className="App">
       <h1 className='text-fancy-rg inline-flex items-center px-6 py-4 mb-8 font-semibold transition-all duration-200'>BACKBOT V4</h1>
       <header className="App-header text-fancy-bold">
-      <StyleSelection handleStyleSelect={handleStyleSelect} />
+      <StyleSelection styleGroups={styleGroups} handleStyleSelect={handleStyleSelect} />
         <TranscribeAudio selectedStyle={selectedStyle} />
 
 

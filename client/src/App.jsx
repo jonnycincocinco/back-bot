@@ -7,6 +7,7 @@ import StyleImage1 from './assets/StyleImage1.png';
 import StyleImage2 from './assets/StyleImage2.png';
 import StyleImage3 from './assets/StyleImage3.png';
 import StyleImage4 from './assets/StyleImage4.png';
+import StyleImage5 from './assets/StyleImage5.jpg';
 
 
 axios.defaults.baseURL ="https://localhost:8000"
@@ -93,6 +94,7 @@ function App() {
       styles: [
         { name: 'Style 3', value: 'v3', image: StyleImage3 },
         { name: 'Style 4', value: 'v4', image: StyleImage4 },
+        { name: 'Style 5', value: 'v5', image: StyleImage5 },
         // Add more styles for group 2
       ],
     },
@@ -134,10 +136,51 @@ function App() {
         throw error;
       }
     };
+
+    const generateStoryImageXL = async (personaName, style) => {
+      try {
+        const response = await axios.post(`/generate-image-sdxl`, { personaName });
+        // console.log('avail',imageDataAvailable);
+        return response.data;
+      } catch (error) {
+        console.error('Error generating image:', error);
+        throw error;
+      }
+    };
     
-    const handleGenerateVideo = () => {
+    const handleGenerateVideoZero = () => {
       axios
-        .post(`/generate-video`, { prompt: personaName })
+        .post(`/generate-video-zero`, { prompt: personaName })
+        .then((response) => {
+          // Assuming the video URL is provided in the response data as a property named "video_url"
+          const videoUrl = response.data;
+          setVideoUrls((prevUrls) => [...prevUrls, videoUrl]);
+          console.log('Video generated:', videoUrl);
+        })
+        .catch((error) => {
+          console.error('Error generating video:', error);
+        });
+    };
+  
+  
+    const handleGenerateImageXL = () => {
+      axios
+        .post(`/generate-image-sdxl`, { prompt: personaName })
+        .then((response) => {
+          // Assuming the video URL is provided in the response data as a property named "video_url"
+          const imageUrl = response.data;
+          setImageUrls((prevUrls) => [...prevUrls, imageUrl]);
+          console.log('Image generated:', imageUrl);
+        })
+        .catch((error) => {
+          console.error('Error generating image:', error);
+        });
+    };
+  
+  
+    const handleGenerateVideoDef = () => {
+      axios
+        .post(`/generate-video-def`, { prompt: personaName })
         .then((response) => {
           // Assuming the video URL is provided in the response data as a property named "video_url"
           const videoUrl = response.data;
@@ -176,10 +219,16 @@ function App() {
     };
     
   
-   const handleSubmitVideo = (e) => {
+   const handleSubmitVideoZero = (e) => {
       e.preventDefault(); // Prevent the default form submission behavior
-      handleGenerateVideo(personaName); // Call handleGenerateVideo with the current value of personaName
+      handleGenerateVideoZero(personaName); // Call handleGenerateVideo with the current value of personaName
     };
+    
+    const handleSubmitVideoDef = (e) => {
+      e.preventDefault(); // Prevent the default form submission behavior
+      handleGenerateVideoDef(personaName); // Call handleGenerateVideo with the current value of personaName
+    };
+  
   
     const handleChange = (e) => {
       setPersonaName(e.target.value);
@@ -188,12 +237,15 @@ function App() {
 
     useEffect(() => {
       handleGenerateImage(selectedStyle);
-    }, [selectedStyle, imageDataAvailable]); // Add imageDataAvailable to the dependency array
+    }, [selectedStyle, imageDataAvailable]);  
   
+    // useEffect(() => {
+    //   handleGenerateImageXL();
+    // }, [imageDataAvailable]);  
   
     return (
       <div className='flex flex-col'>
-        {/* <form onSubmit={handleSubmit}>
+        {/* <form classname="mt-12 mb-4" onSubmit={handleSubmit}>
           <textarea
             cols='32'
             rows='7'
@@ -205,16 +257,39 @@ function App() {
           <button className='main-button' type='submit'>Generate Images</button>
   
         </form> */}
-        <form onSubmit={handleSubmitVideo}>
+        <form className="mt-2 mb-2" onSubmit={handleSubmitVideoZero}>
           <textarea
-            cols='0'
-            rows='0'
+            cols='20'
+            rows='10'
             type='text'
             value={personaName}
             onChange={handleChange}
             placeholder='Enter image prompt'
           />
-          <button className='main-button' type='submit'>Generate Video</button>
+          <button className='main-button' type='submit'>Generate Zero</button>
+        </form>
+        <form className="mt-2 mb-2" onSubmit={handleSubmitVideoDef}>
+          {/* <textarea
+            cols='5'
+            rows='10'
+            type='text'
+            value={personaName}
+            onChange={handleChange}
+            placeholder='Enter image prompt'
+          /> */}
+          <button className='main-button' type='submit'>Generate Def</button>
+        </form>
+        
+        <form className="mt-2 mb-2" onSubmit={handleGenerateImageXL}>
+          {/* <textarea
+            cols='5'
+            rows='10'
+            type='text'
+            value={personaName}
+            onChange={handleChange}
+            placeholder='Enter image prompt'
+          /> */}
+          <button className='main-button' type='submit'>Generate XL</button>
         </form>
   
         {imageUrls.length > 0 && (
@@ -363,7 +438,7 @@ const CreateTreatment = ({ personaStoryPrompt }) => {
         return;
       }
 
-      const sentences = data.story.split('.').map(sentence => sentence.trim());
+      const sentences = data.story.split('$').map(sentence => sentence.trim());
       const imagePrompts = sentences.map(sentence => sentence.replace('Image Prompt:', '').trim());
   
       // Set image prompts state
@@ -567,7 +642,8 @@ const TranscribeAudio = ({ selectedStyle }) => {
         <div>
           <h2>Transcript</h2>
           <CreateTreatment 
-            personaStoryPrompt={`write a treatment for a music video. Start with an overview and then label each scene with the word 'scene' and then a numeral. Then create 2 separate image prompts for each scene, labeled 'foreground' for foreground elements, and 'background' background elements, labeling them with the word 'image' and then a numeral.  Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
+            // personaStoryPrompt={`write a treatment for a music video. Start with an overview and then label each scene with the word 'scene' and then a numeral. Then create 2 separate image prompts for each scene, labeled 'foreground' for foreground elements, and 'background' background elements, labeling them with the word 'image' and then a numeral.  Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
+            personaStoryPrompt={`write a treatment for a music video. Create 4 dynamic scenes, and for each scene, but create 3 separate prompts discribing a specific action by a person or thing, start each scene using the following format (starting at the 0) and ending with a dollar sign: 0: (description) | 20: (description) | 40: (description) $ . Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
             selectedImages={selectedImages}
             handleSelectImage={handleSelectImage}
           />

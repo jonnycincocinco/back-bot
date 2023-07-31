@@ -8,7 +8,6 @@ const FormData = require('form-data');
 const qs = require('querystring');
 const sdk = require('api')('@d-id/v4.2.0#az5qqc32livq5e2n');
 const app = express();
-app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 const fetch = require('node-fetch');
@@ -21,6 +20,8 @@ const options = {
   key: fs.readFileSync('/Users/jonathanlarson/localhost-key.pem'),
   cert: fs.readFileSync('/Users/jonathanlarson/localhost.pem')
 };
+
+app.use(cors());
 
 app.use(express.static(path.join(__dirname,"../dist")));
 
@@ -158,7 +159,7 @@ app.post('/transcribe', async (req, res) => {
 //   }
 // });
 
-app.post('/generate-video', async (req, res) => {
+app.post('/generate-video-zero', async (req, res) => {
   try {
 
     const { prompt } = req.body;
@@ -175,6 +176,69 @@ app.post('/generate-video', async (req, res) => {
           // fov: 40,
           // fps: 15,
           // max_frames: 20,
+        },
+        webhook: "https://localhost:8000/webhook",
+        language: "en",
+      }
+    );
+
+
+    res.json(output);
+
+    console.log('Output:', output);
+  } catch (error) {
+    console.error('Error generating video:', error);
+    res.status(500).json({ error: 'Failed to transcribe audio' });
+  }
+});
+
+app.post('/generate-video-def', async (req, res) => {
+  try {
+
+    const { prompt } = req.body;
+
+    const output = await replicate.run(
+        // "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351",
+      "deforum-art/deforum-stable-diffusion:1a98303504c7d866d2b198bae0b03237eab82edc1491a5306895d12b0021d6f6",
+      {
+        input: {
+          model_checkpoint: "Protogen_V2.2.ckpt",
+          // prompt: prompt + ", beautiful, 8k, perfect, award winning,",
+          // num_frames: 2,
+          animation_prompts: prompt,
+          fov: 40,
+          fps: 15,
+          max_frames: 80,
+        },
+        webhook: "https://localhost:8000/webhook",
+        language: "en",
+      }
+    );
+
+
+    res.json(output);
+
+    console.log('Output:', output);
+  } catch (error) {
+    console.error('Error generating video:', error);
+    res.status(500).json({ error: 'Failed to transcribe audio' });
+  }
+});
+
+app.post('/generate-image-sdxl', async (req, res) => {
+  try {
+
+    const { prompt } = req.body;
+
+    const output = await replicate.run(
+        "stability-ai/sdxl:2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2",
+      {
+        input: {
+          prompt: prompt,
+          image: "https://f4.bcbits.com/img/a0483269192_16.jpg", 
+          refine: "base_image_refiner",
+          scheduler: "KarrasDPM",
+          mask: "https://replicate.delivery/pbxt/JF3Ld3yPLVA3JIELHx1uaAV5CQOyr4AoiOfo6mJZn2fofGaT/dog-mask.png",
         },
         webhook: "https://localhost:8000/webhook",
         language: "en",
@@ -398,7 +462,7 @@ app.post('/generate-story-image-v3', async (req, res) => {
       model: 'midjourney',
       prompt: `image of a future design --ar 16:9, ${personaName}`,
       negative_prompt: "((words)), nsfw, sexy, no other people, group of people, underwear, (((naked))), (((exposed breasts))), ((bikini)), extra legs, extra hands, extra arms, words, names, text, ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
-      init_image: 'https://cdn.discordapp.com/attachments/1120216639611351183/1132922338959167568/Screen_Shot_2023-07-23_at_11.28.49_PM.png', 
+      init_image: 'https://cdn.discordapp.com/attachments/1120216639611351183/1120929112794603623/Screen_Shot_2023-06-20_at_9.10.54_PM.png', 
       width: "512",
       height: "512",
       samples: "1",
@@ -439,7 +503,47 @@ app.post('/generate-story-image-v4', async (req, res) => {
       model: 'midjourney',
       prompt: `image of a future design --ar 16:9, ${personaName}`,
       negative_prompt: "((words)), nsfw, sexy, no other people, group of people, underwear, (((naked))), (((exposed breasts))), ((bikini)), extra legs, extra hands, extra arms, words, names, text, ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
-      init_image: 'https://cdn.discordapp.com/attachments/1120216639611351183/1120929112794603623/Screen_Shot_2023-06-20_at_9.10.54_PM.png', 
+      init_image: 'https://d1htavafy9m5bl.cloudfront.net/eyJidWNrZXQiOiJwcm9kLXNpaC5zZWV0aWNrZXRzdXNhLnVzIiwia2V5IjoiOTQwYWM0YWYtYmFhYi00ZmI5LWI4MTgtNDMyZjgwZjJlMzY1IiwiZWRpdHMiOnt9fQ==', 
+      width: "512",
+      height: "512",
+      samples: "1",
+      num_inference_steps: "20",
+      seed: null,
+      guidance_scale: 7.5,
+      scheduler: "UniPCMultistepScheduler",
+      webhook: null,
+      track_id: null,
+    });
+
+    const response = await axios.post('https://stablediffusionapi.com/api/v3/img2img', formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error generating story:', error);
+    res.status(500).json({ error: 'Failed to generate story' });
+  }
+});
+
+app.post('/generate-story-image-v5', async (req, res) => {
+  try {
+    const { personaName } = req.body;
+
+    if (!personaName) {
+      throw new Error('Invalid persona name');
+    }
+
+    const formData = qs.stringify({
+      key: process.env.STABLEDIFFUSION_API_KEY,
+      // model: 'midjourney-v4-painta',
+      // model: 'midjourney-papercut',
+      model: 'midjourney',
+      prompt: `image of a goth design --ar 16:9, ${personaName}`,
+      negative_prompt: "((words)), nsfw, sexy, no other people, group of people, underwear, (((naked))), (((exposed breasts))), ((bikini)), extra legs, extra hands, extra arms, words, names, text, ((out of frame)), ((extra fingers)), mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), (((tiling))), ((tile)), ((fleshpile)), ((ugly)), (((abstract))), blurry, ((bad anatomy)), ((bad proportions)), ((extra limbs)), cloned face, (((skinny))), glitchy, ((double torso)), ((extra arms)), ((extra hands)), ((mangled fingers)), (missing lips), ((ugly face)), ((fat)), ((extra legs)), anime",
+      init_image: 'https://f4.bcbits.com/img/a1209677761_16.jpg', 
       width: "512",
       height: "512",
       samples: "1",

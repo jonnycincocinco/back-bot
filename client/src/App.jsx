@@ -643,7 +643,13 @@ const TranscribeAudio = ({ selectedStyle }) => {
           <h2>Transcript</h2>
           <CreateTreatment 
             // personaStoryPrompt={`write a treatment for a music video. Start with an overview and then label each scene with the word 'scene' and then a numeral. Then create 2 separate image prompts for each scene, labeled 'foreground' for foreground elements, and 'background' background elements, labeling them with the word 'image' and then a numeral.  Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
-            personaStoryPrompt={`write a treatment for a music video. Create 4 dynamic scenes, and for each scene, but create 3 separate prompts discribing a specific action by a person or thing, start each scene using the following format (starting at the 0) and ending with a dollar sign: 0: (description) | 20: (description) | 40: (description) $ . Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
+            personaStoryPrompt={`write a treatment for a music video. Create 4 dynamic scenes, and for each scene, create 3 separate prompts discribing a specific action by a person or thing, start each scene using the following format (starting at the 0) and ending with a dollar sign: 0: (description) | 20: (description) | 40: (description) $ . Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
+            selectedImages={selectedImages}
+            handleSelectImage={handleSelectImage}
+          />
+
+          <CreateTreatment 
+            personaStoryPrompt={`write a treatment for a music video. Create 4 dynamic scenes, and for each scene, write a very descriptive prompt for a short video clip always starting with 'A hollywood film of' and always ending with '8k, beautiful, award winning, zoomed out' Don't label the scenes with 'scene 1: scene 2, etc', just start with the prompt, but end each scene with a dollar sign '$'. Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
             selectedImages={selectedImages}
             handleSelectImage={handleSelectImage}
           />
@@ -654,10 +660,10 @@ const TranscribeAudio = ({ selectedStyle }) => {
         <div>
           <h2>Image Prompts</h2>
           <p>{transcript}</p>
-          {/* <ImagePromptForm
+          <ImagePromptForm
             imagePrompts={transcribedSegments.map((segment) => segment.text)}
             transcribedSegments={transcribedSegments}
-          /> */}
+          />
           <button onClick={handleSelectedImages}>Create Selected File</button>
           <button onClick={handleGenerateJsonFile}>Create JSON File</button>
         </div>

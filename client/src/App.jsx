@@ -84,8 +84,8 @@ function App() {
     {
       groupName: 'Group 1',
       styles: [
-        { name: 'Style 1', value: 'v1', image: StyleImage1 },
-        { name: 'Style 2', value: 'v2', image: StyleImage2 },
+        { name: "70's fantasy film", value: "70's fantasy film", image: StyleImage1 },
+        { name: "80's horror movie", value: "80's horror movie", image: StyleImage2 },
         // Add more styles for group 1
       ],
     },
@@ -280,17 +280,10 @@ function App() {
           <button className='main-button' type='submit'>Generate Def</button>
         </form>
         
-        <form className="mt-2 mb-2" onSubmit={handleGenerateImageXL}>
-          {/* <textarea
-            cols='5'
-            rows='10'
-            type='text'
-            value={personaName}
-            onChange={handleChange}
-            placeholder='Enter image prompt'
-          /> */}
+        {/* <form className="mt-2 mb-2" onSubmit={handleGenerateImageXL}>
+          
           <button className='main-button' type='submit'>Generate XL</button>
-        </form>
+        </form> */}
   
         {imageUrls.length > 0 && (
           <div className='flex-none mb-20'>
@@ -438,7 +431,7 @@ const CreateTreatment = ({ personaStoryPrompt }) => {
         return;
       }
 
-      const sentences = data.story.split('$').map(sentence => sentence.trim());
+      const sentences = data.story.split('Scene ').map(sentence => sentence.trim());
       const imagePrompts = sentences.map(sentence => sentence.replace('Image Prompt:', '').trim());
   
       // Set image prompts state
@@ -564,6 +557,7 @@ const TranscribeAudio = ({ selectedStyle }) => {
 
     // Generate a temporary URL for the blob object
     const url = URL.createObjectURL(blob);
+    
 
     // Create a temporary anchor element to download the file
     const link = document.createElement('a');
@@ -634,7 +628,7 @@ const TranscribeAudio = ({ selectedStyle }) => {
         placeholder="Enter additional text"
       />
 
-        <button className='main-button mt-5' type="submit">Transcribe</button>
+        <button className='main-button mt-5' type="submit">Create scenes</button>
         </div>
       </div>
       </form>
@@ -642,17 +636,28 @@ const TranscribeAudio = ({ selectedStyle }) => {
         <div>
           <h2>Transcript</h2>
           <CreateTreatment 
-            // personaStoryPrompt={`write a treatment for a music video. Start with an overview and then label each scene with the word 'scene' and then a numeral. Then create 2 separate image prompts for each scene, labeled 'foreground' for foreground elements, and 'background' background elements, labeling them with the word 'image' and then a numeral.  Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
-            personaStoryPrompt={`write a treatment for a music video. Create 4 dynamic scenes, and for each scene, create 3 separate prompts discribing a specific action by a person or thing, start each scene using the following format (starting at the 0) and ending with a dollar sign: 0: (description) | 20: (description) | 40: (description) $ . Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
+            personaStoryPrompt={`Create a treatment for a short film about ${selectedStyle}, ${additionalText}, and write a story based these lyrics ${transcript}.  Create four scenes in the following format: (detailed description of characters), (camera angles - full shot, close up, etc.), (lens types, eg macro lens, wide angle, etc.), (camera movements, eg slow pan, zoom, etc.). Explain camera movements as if you were explaining to a toddler; so instead of dolly shot, you would say something like zooming in over time or growing over time. Do not label each scene. Make sure each scene is very dynamic and cinematic`} 
             selectedImages={selectedImages}
             handleSelectImage={handleSelectImage}
           />
+          
+          {/* <CreateTreatment 
+            personaStoryPrompt={`write a treatment for a music video in the style of ${selectedStyle}, ${additionalText} and based on these lyrics ${transcript}. Then create a shotlist that includes the following parameters, but not using the parameter labels and simply separated by commas: Shot Description, Actors or Subjects, Camera Angle, Lens and Focal Length, Camera Movement, Lighting. End each shot with a $ (dollar sign). Try using camera-specific terms: camera angles (full shot, close up, etc.), lens types (macro lens, wide angle, etc.), camera movements (slow pan, zoom, etc.). In general, trying to explain camera movements as if you were explaining to a toddler can help; so instead of dolly shot, you would say something like zooming in over time or growing over time. For each shot, instead of using the word 'protaganist', use a description of the subject person.`} 
+            selectedImages={selectedImages}
+            handleSelectImage={handleSelectImage}
+          /> */}
+          
+           {/* <CreateTreatment 
+            personaStoryPrompt={`write a treatment for a music video in the style of ${selectedStyle} and ${additionalText} and based on these lyrics ${transcript}. Then create a shotlist that includes the following parameters, but not using the parameter labels and simply separated by commas: Shot Description, Actors or Subjects, Camera Angle, Lens and Focal Length, Camera Movement, Lighting. End each shot with a $ (dollar sign). For each shot, instead of using the word 'protaganist', use a description of the subject person.`} 
+            selectedImages={selectedImages}
+            handleSelectImage={handleSelectImage}
+          /> */}
 
-          <CreateTreatment 
+          {/* <CreateTreatment 
             personaStoryPrompt={`write a treatment for a music video. Create 4 dynamic scenes, and for each scene, write a very descriptive prompt for a short video clip always starting with 'A hollywood film of' and always ending with '8k, beautiful, award winning, zoomed out' Don't label the scenes with 'scene 1: scene 2, etc', just start with the prompt, but end each scene with a dollar sign '$'. Base the treatment on the following lyrics: ${transcript} ${additionalText}`} 
             selectedImages={selectedImages}
             handleSelectImage={handleSelectImage}
-          />
+          /> */}
         </div>
       )}
 
@@ -675,7 +680,7 @@ const TranscribeAudio = ({ selectedStyle }) => {
 
   return (
     <div className="App">
-      <h1 className='text-fancy-rg inline-flex items-center px-6 py-4 mb-8 font-semibold transition-all duration-200'>BACKBOT V4</h1>
+      <h1 className='text-fancy-rg inline-flex items-center px-6 py-4 mb-8 font-semibold transition-all duration-200'>Moon Loops V0.1</h1>
       <header className="App-header text-fancy-bold">
       <StyleSelection styleGroups={styleGroups} handleStyleSelect={handleStyleSelect} />
         <TranscribeAudio selectedStyle={selectedStyle} />

@@ -47,7 +47,7 @@ app.post('/generate-script', async (req, res) => {
       model: 'text-davinci-003',
       prompt,
       temperature: 0.7,
-      max_tokens: 256,
+      max_tokens: 1024,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,
@@ -166,16 +166,16 @@ app.post('/generate-video-zero', async (req, res) => {
 
     const output = await replicate.run(
         "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351",
-      // "deforum-art/deforum-stable-diffusion:1a98303504c7d866d2b198bae0b03237eab82edc1491a5306895d12b0021d6f6",
       {
         input: {
-          // model_checkpoint: "Protogen_V2.2.ckpt",
-          prompt: prompt + ", beautiful, 8k, perfect, award winning,",
+          prompt: 'cinematic ' + prompt,
           num_frames: 24,
-          // animation_prompts: "vaporwave future " + prompt,
-          // fov: 40,
-          // fps: 15,
-          // max_frames: 20,
+          negative_prompt: "very blue, dust, noisy, washed out, ugly, distorted, broken",
+          fps: 24,
+          model: '576w',
+          guidance_scale: 17.5,
+          width: 1024,
+          height: 576,
         },
         webhook: "https://localhost:8000/webhook",
         language: "en",
